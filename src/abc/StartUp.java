@@ -47,7 +47,7 @@ public class StartUp {
                 String line;
                 while ((line = br.readLine()) != null) {
                     //// TODO: make this more efficient
-                    folder1.add(F1_IMAGE_DIR + "\\" + line);
+                    folder1.add(F1_IMAGE_DIR + "/" + line);
                 }
             }
             // Dir2
@@ -55,7 +55,7 @@ public class StartUp {
                 String line;
                 while ((line = br.readLine()) != null) {
                     //// TODO: make this more efficient
-                    folder2.add(F2_IMAGE_DIR + "\\" + line);
+                    folder2.add(F2_IMAGE_DIR + "/" + line);
                 }
             }
         } catch (IOException e) {
