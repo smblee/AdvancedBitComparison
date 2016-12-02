@@ -17,3 +17,7 @@ out/
 .DS_Store
 saved.png
 **/list.txt
+OutputImages/*
+!OutputImages/.gitkeep
+shapes/*
+!shapes/.gitkeep
