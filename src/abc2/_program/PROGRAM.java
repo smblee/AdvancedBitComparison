@@ -1,9 +1,9 @@
-package _program;
+package abc2._program;
 
-import imageprocess.corner.Harris_Stephens;
-import imageprocess.corner.filter.ImageDerivative;
-import imageprocess.corner.filter.Prewitt;
-import imageprocess.struct.Complex;
+import abc2.imageprocess.corner.Harris_Stephens;
+import abc2.imageprocess.corner.filter.ImageDerivative;
+import abc2.imageprocess.corner.filter.Prewitt;
+import abc2.imageprocess.struct.Complex;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,11 +17,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import query.struct.Data;
-import query.struct.Map2;
-import query.struct.SComparator;
-import query.tree.QueryTree;
-import util.Util;
+import abc2.query.struct.Data;
+import abc2.query.struct.Map2;
+import abc2.query.struct.SComparator;
+import abc2.query.tree.QueryTree;
+import abc2.util.Util;
 
 public class PROGRAM {
 	private static int C = 2;

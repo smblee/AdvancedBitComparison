@@ -1,4 +1,4 @@
-package query.struct;
+package abc2.query.struct;
 
 import java.util.Map;
 

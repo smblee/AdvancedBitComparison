@@ -1,8 +1,8 @@
-package imageprocess.filters;
+package abc2.imageprocess.filters;
 
-import imageprocess.struct.Complex;
-import imageprocess.struct.Matrix;
-import util.Util;
+import abc2.imageprocess.struct.Complex;
+import abc2.imageprocess.struct.Matrix;
+import abc2.util.Util;
 
 public interface ImageFilter {	
 	public Complex[][] dy_up(Complex[][] I);

@@ -1,10 +1,10 @@
-package imageprocess.struct;
+package abc2.imageprocess.struct;
 
 import static java.lang.Math.*;
 
 import java.util.HashMap;
 
-import util.Util;
+import abc2.util.Util;
 
 public class Complex {
 	public final double Re, Im;

@@ -1,7 +1,7 @@
-package imageprocess.corner;
+package abc2.imageprocess.corner;
 
-import imageprocess.struct.Complex;
-import imageprocess.struct._Patch;
+import abc2.imageprocess.struct.Complex;
+import abc2.imageprocess.struct._Patch;
 
 import java.util.function.BiFunction;
 

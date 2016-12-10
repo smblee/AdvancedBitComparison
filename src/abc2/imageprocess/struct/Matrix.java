@@ -1,6 +1,6 @@
-package imageprocess.struct;
+package abc2.imageprocess.struct;
 
-import util.Util;
+import abc2.util.Util;
 
 public class Matrix{
 	public static boolean multiplicable(Complex[][] A, Complex[][] B){

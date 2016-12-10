@@ -1,4 +1,4 @@
-package imageprocess.struct;
+package abc2.imageprocess.struct;
 
 public class _Patch {
 

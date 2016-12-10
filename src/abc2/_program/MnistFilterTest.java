@@ -1,17 +1,17 @@
-package _program;
+package abc2._program;
 
-import imageprocess.corner.Harris_Stephens;
-import imageprocess.corner.filter.ImageDerivative;
-import imageprocess.corner.filter.Prewitt;
-import imageprocess.struct.Complex;
-import imageprocess.struct.Matrix;
+import abc2.imageprocess.corner.Harris_Stephens;
+import abc2.imageprocess.corner.filter.ImageDerivative;
+import abc2.imageprocess.corner.filter.Prewitt;
+import abc2.imageprocess.struct.Complex;
+import abc2.imageprocess.struct.Matrix;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import util.Util;
+import abc2.util.Util;
 
 public class MnistFilterTest {
 	private static FileReader fr; 

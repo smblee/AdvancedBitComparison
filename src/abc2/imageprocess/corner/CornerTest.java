@@ -1,16 +1,16 @@
-package imageprocess.corner;
+package abc2.imageprocess.corner;
 
-import imageprocess.corner.filter.ImageDerivative;
-import imageprocess.corner.filter.Prewitt;
-import imageprocess.struct.Complex;
+import abc2.imageprocess.corner.filter.ImageDerivative;
+import abc2.imageprocess.corner.filter.Prewitt;
+import abc2.imageprocess.struct.Complex;
 
 import java.awt.image.BufferedImage;
 import java.sql.Time;
 import java.util.function.BiFunction;
 
-import query.struct.Data;
-import _program.PROGRAM;
-import util.Util;
+import abc2.query.struct.Data;
+import abc2._program.PROGRAM;
+import abc2.util.Util;
 
 public class CornerTest {
 

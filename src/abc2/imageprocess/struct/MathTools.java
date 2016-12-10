@@ -1,10 +1,10 @@
-package imageprocess.struct;
+package abc2.imageprocess.struct;
 
 import java.util.Arrays;
 import java.util.List;
 
-import query.struct.Data;
-import util.Util;
+import abc2.query.struct.Data;
+import abc2.util.Util;
 
 public class MathTools {
 	

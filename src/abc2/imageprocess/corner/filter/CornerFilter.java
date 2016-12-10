@@ -1,6 +1,6 @@
-package imageprocess.corner.filter;
+package abc2.imageprocess.corner.filter;
 
-import imageprocess.filters.ImageFilter;
+import abc2.imageprocess.filters.ImageFilter;
 
 public interface CornerFilter extends ImageFilter {
 

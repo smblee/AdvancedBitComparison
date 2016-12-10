@@ -1,4 +1,4 @@
-package query.tree;
+package abc2.query.tree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,11 +6,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import query.struct.Data;
-import query.struct.Entry;
-import query.struct.Map2;
-import query.struct.SComparator;
-import util.Util;
+import abc2.query.struct.Data;
+import abc2.query.struct.Entry;
+import abc2.query.struct.Map2;
+import abc2.query.struct.SComparator;
+import abc2.util.Util;
 
 public class QueryTree {
 	private Map2<Integer, Data> LMS;

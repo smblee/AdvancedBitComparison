@@ -1,6 +1,6 @@
-package query.struct;
+package abc2.query.struct;
 
-import util.Util;
+import abc2.util.Util;
 
 public class Data {
 	public final double a, b, S;
