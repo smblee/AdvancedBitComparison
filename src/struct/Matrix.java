@@ -1,4 +1,4 @@
-package abc2.imageprocess.struct;
+package struct;
 
 import abc2.util.Util;
 

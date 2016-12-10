@@ -3,15 +3,15 @@ package abc2.imageprocess.corner;
 import abc2.imageprocess.corner.filter.ImageDerivative;
 import abc2.imageprocess.corner.filter.Prewitt;
 import abc2.imageprocess.filters.ImageFilter;
-import abc2.imageprocess.struct.Complex;
-import abc2.imageprocess.struct.MathTools;
-import abc2.imageprocess.struct.Matrix;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import abc2.query.struct.Data;
+import struct.Complex;
+import struct.Data;
+import struct.MathTools;
+import struct.Matrix;
 import abc2.util.Util;
 
 public class Harris_Stephens{

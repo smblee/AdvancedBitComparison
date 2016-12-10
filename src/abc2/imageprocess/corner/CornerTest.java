@@ -2,13 +2,13 @@ package abc2.imageprocess.corner;
 
 import abc2.imageprocess.corner.filter.ImageDerivative;
 import abc2.imageprocess.corner.filter.Prewitt;
-import abc2.imageprocess.struct.Complex;
 
 import java.awt.image.BufferedImage;
 import java.sql.Time;
 import java.util.function.BiFunction;
 
-import abc2.query.struct.Data;
+import struct.Complex;
+import struct.Data;
 import abc2._program.PROGRAM;
 import abc2.util.Util;
 

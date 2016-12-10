@@ -1,9 +1,8 @@
-package abc2.imageprocess.struct;
+package struct;
 
 import java.util.Arrays;
 import java.util.List;
 
-import abc2.query.struct.Data;
 import abc2.util.Util;
 
 public class MathTools {

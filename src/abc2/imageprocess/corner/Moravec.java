@@ -1,9 +1,9 @@
 package abc2.imageprocess.corner;
 
-import abc2.imageprocess.struct.Complex;
-import abc2.imageprocess.struct._Patch;
-
 import java.util.function.BiFunction;
+
+import struct.Complex;
+import struct._Patch;
 
 /**
  * Moravec corner detection algorithm

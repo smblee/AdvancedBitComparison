@@ -1,7 +1,5 @@
 package abc2.util;
 
-import abc2.imageprocess.struct.Complex;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
@@ -10,6 +8,8 @@ import java.math.BigInteger;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
+
+import struct.Complex;
 
 public class Util {
 

@@ -1,10 +1,10 @@
 package abc2.imageprocess.corner.filter;
 
 import abc2.imageprocess.filters.ImageFilter;
-import abc2.imageprocess.struct.Complex;
 
 import java.util.function.BiFunction;
 
+import struct.Complex;
 import abc2.util.Util;
 
 public class Prewitt implements CornerFilter{

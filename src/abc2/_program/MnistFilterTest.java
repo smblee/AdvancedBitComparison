@@ -6,9 +6,6 @@ import abc2.imageprocess.corner.filter.Prewitt;
 import abc2.imageprocess.corner.filter.RobertsCross;
 import abc2.imageprocess.corner.filter.Scharr;
 import abc2.imageprocess.corner.filter.Sobel;
-import abc2.imageprocess.struct.Complex;
-import abc2.imageprocess.struct.Matrix;
-import abc2.imageprocess.struct.MathTools;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,6 +14,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import struct.Complex;
+import struct.MathTools;
+import struct.Matrix;
 import abc2.util.Util;
 
 public class MnistFilterTest {

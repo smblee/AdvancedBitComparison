@@ -3,7 +3,6 @@ package abc2._program;
 import abc2.imageprocess.corner.Harris_Stephens;
 import abc2.imageprocess.corner.filter.ImageDerivative;
 import abc2.imageprocess.corner.filter.Prewitt;
-import abc2.imageprocess.struct.Complex;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,9 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import abc2.query.struct.Data;
-import abc2.query.struct.Map2;
-import abc2.query.struct.SComparator;
+import struct.Complex;
+import struct.Data;
+import struct.Map2;
+import struct.SComparator;
 import abc2.query.tree.QueryTree;
 import abc2.util.Util;
 

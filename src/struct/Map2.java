@@ -1,4 +1,4 @@
-package abc2.query.struct;
+package struct;
 
 import java.util.Collection;
 import java.util.HashMap;
