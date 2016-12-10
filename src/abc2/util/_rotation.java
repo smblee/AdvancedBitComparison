@@ -1,10 +1,10 @@
-package abc2.rotation;
+package util;
 import java.util.*;
 import java.io.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
-public class rotation{
+public class _rotation{
 	static boolean DEBUG = true;
 
 	static final int X = 0;

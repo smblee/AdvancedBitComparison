@@ -1,6 +1,6 @@
-package abc2.struct;
+package imageprocess.struct;
 
-import abc2.util.Util;
+import util.Util;
 
 public class MatrixTest {
 

@@ -1,18 +1,19 @@
-package abc2.filters;
+package imageprocess.filters;
 
-import abc2.struct.Complex;
-import abc2.util.Util;
+import imageprocess.struct.Complex;
+import imageprocess.struct.Matrix;
+import util.Util;
 
 public interface ImageFilter {	
-	Complex[][] dx_up(Complex[][] I);
-	Complex[][] dx_down(Complex[][] I);
-	Complex[][] dy_left(Complex[][] I);
-	Complex[][] dy_right(Complex[][] I);
+	public Complex[][] dy_up(Complex[][] I);
+	public Complex[][] dy_down(Complex[][] I);
+	public Complex[][] dx_left(Complex[][] I);
+	public Complex[][] dx_right(Complex[][] I);
 	
-	Complex[][] dx(Complex[][] I);
-	Complex[][] dy(Complex[][] I);
+	public Complex[][] dx(Complex[][] I);
+	public Complex[][] dy(Complex[][] I);
 	
-	Complex[][] d(Complex[][] I);
+	public Complex[][] d(Complex[][] I);
 	
 	/**
 	 * mask an image I with masking kernel
@@ -20,15 +21,17 @@ public interface ImageFilter {
 	 * @param I : Image
 	 * @return masked Image
 	 */
-	default Complex[][] mask(Complex[][] kernel, Complex[][] I){
+	public static Complex[][] mask(Complex[][] kernel, Complex[][] I){
 		int col_l = I.length;
 		int row_l = I[0].length;
 
 		Complex[][] ret = new Complex[col_l][row_l];
 
+		/*
 		Util.pl(row_l);
 		Util.pl(col_l);
 		Util.pl(Util.arr_s(kernel, " "));
+		*/
 		
 		for(int j=0; j<col_l; j++){
 			for(int i=0; i<row_l; i++){
@@ -88,7 +91,7 @@ public interface ImageFilter {
 //		return sum;
 //	}
 	
-	default Complex patch_mask(Complex[][] kernel, Complex[][] I, int i, int j){
+	public static Complex patch_mask(Complex[][] kernel, Complex[][] I, int i, int j){
 		int x, y;
 		Complex[][] rst; Complex sum;
 		

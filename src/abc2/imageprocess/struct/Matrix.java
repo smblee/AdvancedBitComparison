@@ -1,6 +1,6 @@
-package abc2.struct;
+package imageprocess.struct;
 
-import abc2.util.Util;
+import util.Util;
 
 public class Matrix{
 	public static boolean multiplicable(Complex[][] A, Complex[][] B){
@@ -29,6 +29,21 @@ public class Matrix{
 		return ret;
 	}
 	*/
+	
+	/**
+	 * transpose of matrix m
+	 * @param m
+	 * @return
+	 */
+	public static Complex[][] transpose(Complex[][] m){
+		int c = m.length; int r = m[0].length;
+		Complex[][] ret = new Complex[r][c];
+		for(int i=0; i<r; i++)
+			for(int j=0; j<c; j++)
+				ret[i][j] = m[j][i];
+		return ret;
+	}
+	
 	public static Complex[][] mult(Complex[][] A, Complex[][] B){
 		return mult(A, 0, 0, A.length, A[0].length, B, 0, 0, B.length, B[0].length);
 	}
@@ -127,6 +142,32 @@ public class Matrix{
 		}
 		
 		//Util.pl(Util.arr_s(ret, " "));
+		return ret;
+	}
+	
+	/**
+	 * @param matrix
+	 * @return Complex[] = {eigen1, eigen2}
+	 */
+	public static Complex[] eigen(Complex[][] matrix){
+		Complex a, b, c, d, AplusD, point5, four, p1, p2;
+		Complex[] ret;
+		
+		ret = new Complex[2];
+		a = matrix[0][0]; b = matrix[0][1]; c = matrix[1][0]; d = matrix[1][1];
+		
+		AplusD = a.add(d);
+		point5 = Complex.cartesian(0.5);
+		four = Complex.cartesian(4);
+		
+		p1 = AplusD.mult(point5);
+		p2 = AplusD.mult(AplusD).sub(four.mult(a).mult(d)).add(four.mult(b).mult(c));
+		p2 = p1.sqrt().mult(point5);
+		
+		//Util.pl(p1 + " : " + p2);
+		ret[0] = p1.add(p2);
+		ret[1] = p1.sub(p2);
+		
 		return ret;
 	}
 }

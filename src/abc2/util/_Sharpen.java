@@ -1,14 +1,13 @@
-package abc2.edge;
+package util;
 
 import java.util.*;
 import java.math.*;
 import java.io.*;
 import java.awt.image.BufferedImage;
+
 import javax.imageio.ImageIO;
 
-import abc2.util.Util;
-
-public class Sharpen{
+public class _Sharpen{
 	static String delimeter = " ";
 	static boolean debug = true;
 

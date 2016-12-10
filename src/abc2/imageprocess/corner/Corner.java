@@ -1,4 +1,4 @@
-package abc2.corner;
+package imageprocess.corner;
 
 public class Corner {
 

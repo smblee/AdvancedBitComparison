@@ -1,12 +1,12 @@
-package abc2.corner;
+package imageprocess.corner;
+
+import imageprocess.struct.Complex;
+import imageprocess.struct._Patch;
 
 import java.util.function.BiFunction;
 
-import abc2.struct.Complex;
-import abc2.struct.Patch;
-
 /**
- * Simple corner detection algorithm
+ * Moravec corner detection algorithm
  * <p>
  * The algorithm tests each pixel in the image to see if a corner is present, by considering how similar a patch centered on the pixel is to nearby, largely overlapping patches. 
  * <p>
@@ -16,7 +16,7 @@ import abc2.struct.Patch;
  * @author Art
  *
  */
-public class Simple {
+public class Moravec {
 	
 	/**
 	 * 
@@ -24,8 +24,8 @@ public class Simple {
 	 * @param p2
 	 * @return -1 if p1, p2 does not match size; distance between two patches
 	 */
-	public static double distance(Patch p1, Patch p2, BiFunction<Integer, Integer, Double> b){
-		if(!Patch.matchSize(p1, p2)){
+	public static double distance(_Patch p1, _Patch p2, BiFunction<Integer, Integer, Double> b){
+		if(!_Patch.matchSize(p1, p2)){
 			return -1.0;
 		}
 		

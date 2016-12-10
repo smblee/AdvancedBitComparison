@@ -1,14 +1,18 @@
-package abc2.struct;
+package imageprocess.struct;
 
 import static java.lang.Math.*;
+
 import java.util.HashMap;
 
+import util.Util;
+
 public class Complex {
-	public final int Re;
-	public final int R, theta;
+	public final double Re, Im;
+	public final double R, theta;
 		
-	private Complex(int _Re, int _R, int _theta){
+	private Complex(double _Re, double _Im, double _R, double _theta){
 		Re = _Re;
+		Im = _Im;
 		R = _R;
 		theta = _theta;
 	}
@@ -17,7 +21,7 @@ public class Complex {
 	public Complex sub(Complex c) {return Complex.cartesian(Re - c.Re, Im - c.Im);}
 	public Complex mult(Complex c){return Complex.cartesian(Re * c.Re - Im * c.Im, Re * c.Im + Im * c.Re);}
 	
-	public int magnitude() { return Math.sqrt(Re * Re + Im * Im); }
+	public double magnitude() { return Math.sqrt(Re * Re + Im * Im); }
 
 	public Complex conjg(){
 		return Complex.cartesian(Re, -1 * Im);
@@ -27,16 +31,23 @@ public class Complex {
 		return polar(Math.sqrt(R), theta / 2);
 	}
 	
-	public static Complex polar(int R, int theta){
-		int Re, Im;
+	public static Complex polar(double R, double theta){
+		double Re, Im;
 		Re = R * cos(theta);
 		Im = R * sin(theta);
+		if(Double.isNaN(theta) || Double.isNaN(R) || Double.isNaN(Re) || Double.isNaN(Im))
+			Util.pl(R + ", " + theta + " gives NaN");
 		return new Complex(Re, Im, R, theta);
 	}
-	public static Complex cartesian(int Re, int Im){
-		int R, theta;
+	public static Complex cartesian(double Re, double Im){
+		double R, theta;
 		R = Math.sqrt(Im * Im + Re * Re);
-		theta = atan(Im / Re);
+		if(Re == 0)
+			theta = Math.PI / 2;
+		else
+			theta = atan(Im / Re);
+		if(Double.isNaN(theta) || Double.isNaN(R) || Double.isNaN(Re) || Double.isNaN(Im))
+			Util.pl(Re + ", " + Im + " gives NaN");
 		return new Complex(Re, Im, R, theta);
 	}
 	
@@ -65,7 +76,7 @@ public class Complex {
 		return pool.get(i);
 	}
 	
-	public static Complex cartesian(int d){
+	public static Complex cartesian(double d){
 		return Complex.cartesian(d, 0);
 	}
 }
