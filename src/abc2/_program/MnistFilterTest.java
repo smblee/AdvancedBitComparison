@@ -84,9 +84,11 @@ public class MnistFilterTest {
 		Util.pl(col_l + " x " + row_l);
 
 		for(String filename: f1_list) {
+			Util.pl(folder1 + "/" + filename);
 			show(folder1 + "/" + filename);
 		}
 		for(String filename: f2_list) {
+			Util.pl(folder2 + "/" + filename);
 			show(folder2 + "/" + filename);
 		}
 		
@@ -98,64 +100,233 @@ public class MnistFilterTest {
 		int[][] img;
 		img = Util.read(path, row_l, col_l);
 		
+		
 		x = img.length;
 		y = img[0].length;
-		Complex[][] I = new Complex[x][y];
-		for(int i=0; i<x; i++)
-			for(int j=0; j<y; j++)
-				I[i][j] = Complex.cartesian(img[i][j]);
-		
+//		Complex[][] I = new Complex[x][y];
+//		for(int i=0; i<x; i++)
+//			for(int j=0; j<y; j++)
+//				I[i][j] = Complex.cartesian(img[i][j]);
 
-		Util.pl(Util.arr_s(I, " "));
+		Util.pl("original");
+		Util.pl(Util.arr_s(img, " "));
 		
-		Complex[][] derivative_kernel = Scharr.instance().x_right_kernel();
-//		Complex[][] dx_kernel = RobertsCross.instance().x_kernel();
-//		Complex[][] dy_kernel = RobertsCross.instance().x_kernel();
-		Complex[][] Ix, Iy, st;
-		Complex k = Complex.cartesian(0);
-		
-
-
-//		Ix = ImageDerivative.derivative(I, dx_kernel);
-//		Iy = ImageDerivative.derivative(I, dy_kernel);
-
-		
-		Ix = ImageDerivative.derivative(I, derivative_kernel);
-		Iy = ImageDerivative.derivative(I, Matrix.transpose(derivative_kernel));
-
-		double A, x0, y0, sigmaX, sigmaY;
-		
-		A = 1.0;
-		x0 = 0;
-		y0 = 0;
-		sigmaX = x;
-		sigmaY = y;
-		
-		
-		Complex[][] R_matrix = new Complex[x][y];
-		
-		List<Double[]> data = new ArrayList<Double[]>();
-		for(int v=0; v < col_l; v++){
-			for(int u=0; u < row_l; u++){
-				st = Harris_Stephens.structure_tensor(Ix, Iy, u, v,
-						ImageDerivative.Gaussian(A, x0, y0, sigmaX, sigmaY));
-				
-				R_matrix[v][u] =  Harris_Stephens.R(st, k);
-					//Util.pl("(" + u + ", " + v + ")");
-				if(R_matrix[v][u].Re != 0){
-					R_matrix[v][u] = Complex.cartesian(1);
-					Util.pl("(" + u  + ", " +  v  + ")");
-					Double[] datum = {u*1.0, v*1.0};
-					data.add(datum);
-				}
-				//
-				//ret[v][u] = R(st, k);
+		int[] one_d = new int[x * y];
+		init(one_d, x, y);
+		int[] ret = process();
+		int[][] ret1 = new int[x][y];
+		int i=0;
+		for(int u=0; u<y; u++){
+			for(int v=0; v<x; v++){
+				ret1[v][u] = ret[i++];
 			}
 		}
+		Util.pl(Util.arr_s(ret1, " "));
+//
+//		float[][] kernelx = {{-1, 0, 1}, 
+//                {-2, 0, 2}, 
+//                {-1, 0, 1}};
+//		
+//		float[][] kernely = {{-1, -2, -1}, 
+//                {0,  0,  0}, 
+//                {1,  2,  1}};
+//	
+//			
+//		double[][] outputimage = new double[x][y];
+//		double[][] gradientimage = new double[x][y];
+//		for(int v=0; v<x; v++){
+//			for(int u=0; u<y; u++){
+//				
+//
+//				double magX = 0.0, magY = 0.0; // this is your magnitude
+//
+//				if(u == 0 || v == 0 || u == y - 1 || v == x - 1){
+//					outputimage[v][u] = 0.0;
+//					gradientimage[v][u] = 0.0;
+//				}
+//				else{
+//					for(int a = 0; a < 3; a++)
+//					{
+//						for(int b = 0; b < 3; b++)
+//						{         
+//							Util.pl((v + a - 1) + " : " + (u + b - 1));
+//							magX += img[v + a - 1][u + b - 1] * kernelx[a][b];
+//							magY += img[v + a - 1][u + b - 1] * kernely[a][b];
+//						}
+//					}
+//
+//					Util.pl(magX + " : " + magY);
+//					double mag = Math.sqrt(magX * magX + magY * magY);
+//					double gradient = Math.atan(magY / magX);
+//
+//					outputimage[v][u] = mag;
+//					gradientimage[v][u] = gradient;
+//				}
+//			}
+//		}
+//
+//		Util.pl("converted");
+//		int[][] XX = new int[x][y];
+//		int[][] XXX = new int[x][y];
+//		for(int v=0; v<x; v++){
+//			for(int u=0; u<y; u++){
+//				XX[v][u] = outputimage[v][u] == 0.0 ? 0 : 1;
+//				XXX[v][u] = gradientimage[v][u] == 0.0 ? 0 : 1;
+//			}
+//		}
+//		Util.pl("mag");
+//		Util.pl(Util.arr_s(XX, " "));
+//
+//		Util.pl("gradient");
+//		Util.pl(Util.arr_s(XXX, " "));
+//		
 		
 		
-		Util.pl(Util.arr_s(R_matrix, " "));
-		
-		Util.pl(MathTools.linear_regression_R2(data));
+//
+//		Util.pl(Util.arr_s(I, " "));
+//		
+////		Complex[][] derivative_kernel = Sobel.instance().x_right_kernel();
+//		Complex[][] dx_kernel = Sobel.instance().x_left_kernel();
+//		Complex[][] dy_kernel = Sobel.instance().y_up_kernel();
+//		Complex[][] Ix, Iy, st;
+//		Complex k = Complex.cartesian(0);
+//		
+//
+//
+//		Ix = ImageDerivative.derivative(I, dx_kernel);
+//		Iy = ImageDerivative.derivative(I, dy_kernel);
+//
+//		
+////		Ix = ImageDerivative.derivative(I, derivative_kernel);
+////		Iy = ImageDerivative.derivative(I, Matrix.transpose(derivative_kernel));
+//
+//		Util.pl("IX");
+//		Util.pl(Util.arr_s(Ix, " "));
+//		Util.pl("IX");
+//		
+//
+//		Util.pl("IY");
+//		Util.pl(Util.arr_s(Ix, " "));
+//		Util.pl("IY");
+//
+//		double A, x0, y0, sigmaX, sigmaY;
+//		
+//		A = 1.0;
+//		x0 = 0;
+//		y0 = 0;
+//		sigmaX = x;
+//		sigmaY = y;
+//		
+//		
+//		Complex[][] R_matrix = new Complex[x][y];
+//		
+//		List<Double[]> data = new ArrayList<Double[]>();
+//		for(int v=0; v < col_l; v++){
+//			for(int u=0; u < row_l; u++){
+//				
+////				st = Harris_Stephens.structure_tensor(Ix, Iy, u, v,
+////						ImageDerivative.Gaussian(A, x0, y0, sigmaX, sigmaY));
+////				
+////				R_matrix[v][u] =  Harris_Stephens.R(st, k);
+//				R_matrix[v][u] = Ix[v][u].mult(Ix[v][u]).add(Iy[v][u].mult(Iy[v][u])).sqrt();
+//					//Util.pl("(" + u + ", " + v + ")");
+//				if(R_matrix[v][u].Re != 0){
+//					R_matrix[v][u] = Complex.cartesian(1);
+//					Util.pl("(" + u  + ", " +  v  + ")");
+//					Double[] datum = {u*1.0, v*1.0};
+//					data.add(datum);
+//				}
+//				//
+//				//ret[v][u] = R(st, k);
+//			}
+//		}
+//		
+//		
+//		Util.pl(Util.arr_s(R_matrix, " "));
+//		
+//		Util.pl(MathTools.linear_regression_R2(data));
+	}
+	
+	/* ONLINE */
+	static int[] input;
+	static int[] output;
+	static float[] template={-1,0,1,-2,0,2,-1,0,1};;
+	static int progress = 0;
+	static int templateSize=3;
+	static int width;
+	static int height;
+	static double[] direction;
+
+	public void sobel() {
+		progress=0;
+	}
+
+	public static void init(int[] original, int widthIn, int heightIn) {
+		width=widthIn;
+		height=heightIn;
+		input = new int[width*height];
+		output = new int[width*height];
+		direction = new double[width*height];
+		input=original;
+	}
+	
+	public static int[] process() {
+		float[] GY = new float[width*height];
+		float[] GX = new float[width*height];
+		int[] total = new int[width*height];
+		progress=0;
+		int sum=0;
+		int max=0;
+
+		for(int x=(templateSize-1)/2; x<width-(templateSize+1)/2;x++) {
+			progress++;
+			for(int y=(templateSize-1)/2; y<height-(templateSize+1)/2;y++) {
+				sum=0;
+
+				for(int x1=0;x1<templateSize;x1++) {
+					for(int y1=0;y1<templateSize;y1++) {
+						int x2 = (x-(templateSize-1)/2+x1);
+						int y2 = (y-(templateSize-1)/2+y1);
+						float value = (input[y2*width+x2] & 0xff) * (template[y1*templateSize+x1]);
+						sum += value;
+					}
+				}
+				GY[y*width+x] = sum;
+				for(int x1=0;x1<templateSize;x1++) {
+					for(int y1=0;y1<templateSize;y1++) {
+						int x2 = (x-(templateSize-1)/2+x1);
+						int y2 = (y-(templateSize-1)/2+y1);
+						float value = (input[y2*width+x2] & 0xff) * (template[x1*templateSize+y1]);
+						sum += value;
+					}
+				}
+				GX[y*width+x] = sum;
+
+			}
+		}
+		for(int x=0; x<width;x++) {
+			for(int y=0; y<height;y++) {
+				total[y*width+x]=(int)Math.sqrt(GX[y*width+x]*GX[y*width+x]+GY[y*width+x]*GY[y*width+x]);
+				direction[y*width+x] = Math.atan2(GX[y*width+x],GY[y*width+x]);
+				if(max<total[y*width+x])
+					max=total[y*width+x];
+			}
+		}
+		float ratio=(float)max/255;
+		for(int x=0; x<width;x++) {
+			for(int y=0; y<height;y++) {
+				sum=(int)(total[y*width+x]/ratio);
+				output[y*width+x] = 0xff000000 | ((int)sum << 16 | (int)sum << 8 | (int)sum);
+			}
+		}
+		progress=width;
+		return output;
+	}
+
+	public static double[] getDirection() {
+		return direction;
+	}
+	public static int getProgress() {
+		return progress;
 	}
 }

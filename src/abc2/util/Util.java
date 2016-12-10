@@ -204,4 +204,56 @@ public class Util {
 		sb.deleteCharAt(sb.length() - 1);
 		return sb.toString();
 	}
+	
+	public static String arr_s(double[] arr, String s){
+		StringBuilder sb = new StringBuilder();
+		for(double o: arr){
+			sb.append(o);
+			sb.append(s);
+		}
+		sb.deleteCharAt(sb.length() - 1);
+		return sb.toString();
+	}
+
+	public static String arr_s(double[][] arr2, String s){
+		StringBuilder sb = new StringBuilder();
+		for(int i=0; i<arr2.length; i++){
+			double[] arr = arr2[i];
+			for(int j=0; j<arr.length; j++){
+				double o = arr[j];
+				sb.append(o);
+				sb.append(s);
+			}
+			sb.deleteCharAt(sb.length() - 1);
+			sb.append("\n");
+		}
+		sb.deleteCharAt(sb.length() - 1);
+		return sb.toString();
+	}
+	
+	public static String arr_s(int[] arr, String s){
+		StringBuilder sb = new StringBuilder();
+		for(int o: arr){
+			sb.append(o);
+			sb.append(s);
+		}
+		sb.deleteCharAt(sb.length() - 1);
+		return sb.toString();
+	}
+
+	public static String arr_s(int[][] arr2, String s){
+		StringBuilder sb = new StringBuilder();
+		for(int i=0; i<arr2.length; i++){
+			int[] arr = arr2[i];
+			for(int j=0; j<arr.length; j++){
+				int o = arr[j];
+				sb.append(o);
+				sb.append(s);
+			}
+			sb.deleteCharAt(sb.length() - 1);
+			sb.append("\n");
+		}
+		sb.deleteCharAt(sb.length() - 1);
+		return sb.toString();
+	}
 }

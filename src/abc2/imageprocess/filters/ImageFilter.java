@@ -54,6 +54,41 @@ public interface ImageFilter {
 		return ret;
 	}
 	
+	
+
+			      /**
+			       * for each image row in input image:
+		   				for each pixel in image row:
+
+			      			set accumulator to zero
+
+			      			for each kernel row in kernel:
+			         			for each element in kernel row:
+
+				            	if element position  corresponding* to pixel position then
+				               		multiply element value  corresponding* to pixel value
+				               		add result to accumulator
+				            	endif
+
+			      		set output image pixel to accumulator
+			       * @param kernel
+			       * @param I
+			       * @return
+			       */
+//	public static Complex[][] convolution(Complex[][] kernel, Complex[][] I){
+//		for(Complex[] image_row: I){
+//			for(Complex pixel : image_row){
+//				Complex accumulator = Complex.cartesian(0);
+//				
+//				for(Complex[] kernel_row : kernel){
+//					for(Complex Element : kernel_row){
+//						if()
+//					}
+//				}
+//			}
+//		}
+//	}
+	
 	/**
 	 * No bounds check for whether an I patch at i, j is within range
 	 * @param kernel : masking kernel

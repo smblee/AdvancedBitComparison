@@ -68,33 +68,33 @@ public class Scharr {
 	}
 	
 	/**
-	 * -1 0 1\n
-	 * -2 0 2\n
-	 * -1 0 1\n
+	 * -3  0 3\n
+	 * -10 0 10\n
+	 * -3  0 3\n
 	 * @return
 	 */
 	public Complex[][] x_right_kernel()	{	return sobel_x_right_kernel;		}
 	
 	/**
-	 * 1 0 -1\n
-	 * 2 0 -2\n
-	 * 1 0 -1\n
+	 * 3  0 -3\n
+	 * 10 0 -10\n
+	 * 3  0 -3\n
 	 * @return
 	 */
 	public Complex[][] x_left_kernel()	{	return sobel_x_left_kernel; 	}
 	
 	/**
-	 *  1  2  1\n
-	 *  0  0  0\n
-	 * -1 -2 -1\n
+	 *  3  10  3\n
+	 *  0   0  0\n
+	 * -3 -10 -3\n
 	 * @return
 	 */
 	public Complex[][] y_up_kernel()	{	return sobel_y_up_kernel;	}
 	
 	/**
-	 * -1 -2 -1\n
+	 * -3 -10 -3\n
 	 *  0  0  0\n
-	 *  1  2  1\n
+	 *  3  10  3\n
 	 * @return
 	 */
 	public Complex[][] y_down_kernel()	{	return sobel_y_down_kernel; 	}
