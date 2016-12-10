@@ -4,7 +4,7 @@ import abc2.imageprocess.filters.ImageFilter;
 
 import java.util.function.BiFunction;
 
-import struct.Complex;
+import abc2.struct.Complex;
 import abc2.util.Util;
 
 public class Prewitt implements CornerFilter{

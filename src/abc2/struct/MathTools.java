@@ -1,4 +1,4 @@
-package struct;
+package abc2.struct;
 
 import java.util.Arrays;
 import java.util.List;

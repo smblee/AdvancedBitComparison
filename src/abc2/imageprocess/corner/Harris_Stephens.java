@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import struct.Complex;
-import struct.Data;
-import struct.MathTools;
-import struct.Matrix;
+import abc2.struct.Complex;
+import abc2.struct.Data;
+import abc2.struct.MathTools;
+import abc2.struct.Matrix;
 import abc2.util.Util;
 
 public class Harris_Stephens{

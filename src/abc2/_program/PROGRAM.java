@@ -16,11 +16,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import struct.Complex;
-import struct.Data;
-import struct.Map2;
-import struct.SComparator;
 import abc2.query.tree.QueryTree;
+import abc2.struct.Complex;
+import abc2.struct.Data;
+import abc2.struct.Map2;
+import abc2.struct.SComparator;
 import abc2.util.Util;
 
 public class PROGRAM {

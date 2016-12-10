@@ -1,6 +1,6 @@
 package abc2.imageprocess.corner.filter;
 
-import struct.Complex;
+import abc2.struct.Complex;
 
 public class Sobel {
 	private static Object o = new Object();

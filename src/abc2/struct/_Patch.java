@@ -1,4 +1,4 @@
-package struct;
+package abc2.struct;
 
 public class _Patch {
 

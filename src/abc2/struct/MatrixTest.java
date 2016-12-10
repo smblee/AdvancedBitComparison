@@ -1,4 +1,4 @@
-package struct;
+package abc2.struct;
 
 import abc2.util.Util;
 

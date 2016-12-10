@@ -6,10 +6,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import struct.Data;
-import struct.Entry;
-import struct.Map2;
-import struct.SComparator;
+import abc2.struct.Data;
+import abc2.struct.Entry;
+import abc2.struct.Map2;
+import abc2.struct.SComparator;
 import abc2.util.Util;
 
 public class QueryTree {

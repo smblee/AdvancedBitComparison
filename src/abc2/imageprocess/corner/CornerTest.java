@@ -7,9 +7,9 @@ import java.awt.image.BufferedImage;
 import java.sql.Time;
 import java.util.function.BiFunction;
 
-import struct.Complex;
-import struct.Data;
 import abc2._program.PROGRAM;
+import abc2.struct.Complex;
+import abc2.struct.Data;
 import abc2.util.Util;
 
 public class CornerTest {

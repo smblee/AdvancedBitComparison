@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
-import struct.Complex;
+import abc2.struct.Complex;
 
 public class Util {
 

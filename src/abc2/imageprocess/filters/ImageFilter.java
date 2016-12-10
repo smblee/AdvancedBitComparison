@@ -1,7 +1,7 @@
 package abc2.imageprocess.filters;
 
-import struct.Complex;
-import struct.Matrix;
+import abc2.struct.Complex;
+import abc2.struct.Matrix;
 import abc2.util.Util;
 
 public interface ImageFilter {	
