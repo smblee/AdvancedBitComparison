@@ -38,7 +38,7 @@ public class QueryTree {
 					public int compare(Map.Entry<Data, Integer> o1, Map.Entry<Data, Integer> o2) {
 						Data d1 = o1.getKey();
 						Data d2 = o2.getKey();
-						double d = d1.S - d2.S;
+						double d = d1.gof - d2.gof;
 						if(d > 0)
 							return 1;
 						else
@@ -152,11 +152,11 @@ public class QueryTree {
 	}
 	
 	private int INDEX(Data d, double factor){
-		if(d.S + factor <= S_min)
+		if(d.gof + factor <= S_min)
 			return 0;
-		if(d.S + factor >= S_max)
+		if(d.gof + factor >= S_max)
 			return (int) bin_count -1;
-		return (int) ((d.S + factor - S_min) / bin_width);
+		return (int) ((d.gof + factor - S_min) / bin_width);
 	}
 
 

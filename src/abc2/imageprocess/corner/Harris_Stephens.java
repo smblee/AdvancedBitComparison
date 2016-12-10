@@ -54,7 +54,7 @@ public class Harris_Stephens{
 			}
 		}
 
-		return MathTools.linear_regression(data);
+		return MathTools.linear_regression_R2(data);
 	}
 	
 	/**
@@ -146,7 +146,7 @@ public class Harris_Stephens{
 		}
 
 		//Util.pl("\ncount : " + data.size());
-		Data[] ret = {MathTools.linear_regression(data),
+		Data[] ret = {MathTools.linear_regression_R2(data),
 				MathTools.inverse_linear_regression(data)};
 		
 		return ret;

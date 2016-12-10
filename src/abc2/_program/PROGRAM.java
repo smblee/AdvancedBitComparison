@@ -268,8 +268,8 @@ public class PROGRAM {
 				a_max[i] = d[i].a > a_min[i] ? d[i].a : a_min[i];
 				b_min[i] = d[i].b < b_min[i] ? d[i].b : b_min[i];
 				b_max[i] = d[i].b > b_min[i] ? d[i].b : b_min[i];
-				S_min[i] = d[i].S < S_min[i] ? d[i].S : S_min[i];
-				S_max[i] = d[i].S > S_min[i] ? d[i].S : S_min[i];
+				S_min[i] = d[i].gof < S_min[i] ? d[i].gof : S_min[i];
+				S_max[i] = d[i].gof > S_min[i] ? d[i].gof : S_min[i];
 
 				L2.get(i).put(index, d[i]);
 			}else{

@@ -21,3 +21,4 @@ OutputImages/*
 !OutputImages/.gitkeep
 shapes/*
 !shapes/.gitkeep
+/bin

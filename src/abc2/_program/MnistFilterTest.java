@@ -3,13 +3,19 @@ package abc2._program;
 import abc2.imageprocess.corner.Harris_Stephens;
 import abc2.imageprocess.corner.filter.ImageDerivative;
 import abc2.imageprocess.corner.filter.Prewitt;
+import abc2.imageprocess.corner.filter.RobertsCross;
+import abc2.imageprocess.corner.filter.Scharr;
+import abc2.imageprocess.corner.filter.Sobel;
 import abc2.imageprocess.struct.Complex;
 import abc2.imageprocess.struct.Matrix;
+import abc2.imageprocess.struct.MathTools;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import abc2.util.Util;
 
@@ -77,9 +83,13 @@ public class MnistFilterTest {
 		// col by row
 		Util.pl(col_l + " x " + row_l);
 
-		for(String filename: f1_list) show(folder1 + "/" + filename);
-		for(String filename: f2_list) show(folder2 + "/" + filename);
-			
+		for(String filename: f1_list) {
+			show(folder1 + "/" + filename);
+		}
+		for(String filename: f2_list) {
+			show(folder2 + "/" + filename);
+		}
+		
 	}
 	
 	private static void show(String path){
@@ -98,13 +108,21 @@ public class MnistFilterTest {
 
 		Util.pl(Util.arr_s(I, " "));
 		
-		Complex[][] derivative_kernel = Prewitt.instance().x_right_kernel();
+		Complex[][] derivative_kernel = Scharr.instance().x_right_kernel();
+//		Complex[][] dx_kernel = RobertsCross.instance().x_kernel();
+//		Complex[][] dy_kernel = RobertsCross.instance().x_kernel();
 		Complex[][] Ix, Iy, st;
 		Complex k = Complex.cartesian(0);
 		
+
+
+//		Ix = ImageDerivative.derivative(I, dx_kernel);
+//		Iy = ImageDerivative.derivative(I, dy_kernel);
+
+		
 		Ix = ImageDerivative.derivative(I, derivative_kernel);
 		Iy = ImageDerivative.derivative(I, Matrix.transpose(derivative_kernel));
-		
+
 		double A, x0, y0, sigmaX, sigmaY;
 		
 		A = 1.0;
@@ -116,6 +134,7 @@ public class MnistFilterTest {
 		
 		Complex[][] R_matrix = new Complex[x][y];
 		
+		List<Double[]> data = new ArrayList<Double[]>();
 		for(int v=0; v < col_l; v++){
 			for(int u=0; u < row_l; u++){
 				st = Harris_Stephens.structure_tensor(Ix, Iy, u, v,
@@ -126,6 +145,8 @@ public class MnistFilterTest {
 				if(R_matrix[v][u].Re != 0){
 					R_matrix[v][u] = Complex.cartesian(1);
 					Util.pl("(" + u  + ", " +  v  + ")");
+					Double[] datum = {u*1.0, v*1.0};
+					data.add(datum);
 				}
 				//
 				//ret[v][u] = R(st, k);
@@ -134,5 +155,7 @@ public class MnistFilterTest {
 		
 		
 		Util.pl(Util.arr_s(R_matrix, " "));
+		
+		Util.pl(MathTools.linear_regression_R2(data));
 	}
 }

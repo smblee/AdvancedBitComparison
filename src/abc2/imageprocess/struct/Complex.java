@@ -52,10 +52,13 @@ public class Complex {
 	}
 	
 	public String toString(){
-		if(Im < (1.0 / (1 << 30)))
-			return Re + "";
-		return Re + "+" + Im + "i";
+		return "" + ((int) Re);
 	}
+//	public String toString(){
+//		if(Im < (1.0 / (1 << 30)))
+//			return Re + "";
+//		return Re + "+" + Im + "i";
+//	}
 	
 	@Override
 	public boolean equals(Object o){
