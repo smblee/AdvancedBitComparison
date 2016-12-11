@@ -18,7 +18,7 @@ import java.util.TreeMap;
 
 import abc2.query.tree.QueryTree;
 import abc2.struct.Complex;
-import abc2.struct.Data;
+import abc2.struct.SimpleData;
 import abc2.struct.Map2;
 import abc2.struct.SComparator;
 import abc2.util.MathTools;
@@ -32,7 +32,7 @@ public class PROGRAM {
 	private static BufferedReader br;
 
 	private static int row_l, col_l;
-	private static ArrayList<Map2<Integer, Data>> L1, L2, M1, M2, S1, S2;
+	private static ArrayList<Map2<Integer, SimpleData>> L1, L2, M1, M2, S1, S2;
 	private static QueryTree LTree, MTree, STree;
 
 	private static Map2<String, Integer> file_map;
@@ -251,7 +251,7 @@ public class PROGRAM {
 		sigmaX = x;
 		sigmaY = y;
 
-		Data[] d = Harris_Stephens.forestImageR(
+		SimpleData[] d = Harris_Stephens.forestImageR(
 				I, 
 				Prewitt.instance().x_right_kernel(), 
 				fn.Gaussian(A, x0, y0, sigmaX, sigmaY), 
@@ -282,20 +282,20 @@ public class PROGRAM {
 	
 	//
 	private static void init(){
-		L1 = new ArrayList<Map2<Integer, Data>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		M1 = new ArrayList<Map2<Integer, Data>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		S1 = new ArrayList<Map2<Integer, Data>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		L2 = new ArrayList<Map2<Integer, Data>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		M2 = new ArrayList<Map2<Integer, Data>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		S2 = new ArrayList<Map2<Integer, Data>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		L1 = new ArrayList<Map2<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		M1 = new ArrayList<Map2<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		S1 = new ArrayList<Map2<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		L2 = new ArrayList<Map2<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		M2 = new ArrayList<Map2<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		S2 = new ArrayList<Map2<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
 	
 		for(int i=0; i<C; i++){
-			L1.add(new Map2<Integer, Data>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			M1.add(new Map2<Integer, Data>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			S1.add(new Map2<Integer, Data>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			L2.add(new Map2<Integer, Data>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			M2.add(new Map2<Integer, Data>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			S2.add(new Map2<Integer, Data>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+			L1.add(new Map2<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+			M1.add(new Map2<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+			S1.add(new Map2<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+			L2.add(new Map2<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+			M2.add(new Map2<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+			S2.add(new Map2<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
 		}
 
 		a_min = new double[C];

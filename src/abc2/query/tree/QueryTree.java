@@ -6,14 +6,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import abc2.struct.Data;
+import abc2.struct.SimpleData;
 import abc2.struct.Entry;
 import abc2.struct.Map2;
 import abc2.struct.SComparator;
 import abc2.util.Util;
 
 public class QueryTree {
-	private Map2<Integer, Data> LMS;
+	private Map2<Integer, SimpleData> LMS;
 	private int query_size, f2_total_images;
 	
 	private double  bin_count, bin_width, bin_width_shadow;
@@ -24,20 +24,20 @@ public class QueryTree {
 	private double[] S_range;
 	
 	//uses two HashMaps
-	public QueryTree(Map2<Integer, Data> _LMS, 
+	public QueryTree(Map2<Integer, SimpleData> _LMS, 
 			double[] a_range, double[] b_range, double[] S_range,
 			int _f2_total_images, int _query_size){
 		LMS = _LMS;	
 		
-		ArrayList<Map.Entry<Data, Integer>> list = new ArrayList<Map.Entry<Data, Integer>>(LMS.
+		ArrayList<Map.Entry<SimpleData, Integer>> list = new ArrayList<Map.Entry<SimpleData, Integer>>(LMS.
 				back().
 				entrySet());
 	
-		list.sort(new Comparator<Map.Entry<Data, Integer>>(){
+		list.sort(new Comparator<Map.Entry<SimpleData, Integer>>(){
 					@Override
-					public int compare(Map.Entry<Data, Integer> o1, Map.Entry<Data, Integer> o2) {
-						Data d1 = o1.getKey();
-						Data d2 = o2.getKey();
+					public int compare(Map.Entry<SimpleData, Integer> o1, Map.Entry<SimpleData, Integer> o2) {
+						SimpleData d1 = o1.getKey();
+						SimpleData d2 = o2.getKey();
 						double d = d1.gof - d2.gof;
 						if(d > 0)
 							return 1;
@@ -80,11 +80,11 @@ public class QueryTree {
 		//double[] factors = {-1 * bin_width_shadow, 0, bin_width_shadow};
 		double[] factors = {0};
 		
-		Map.Entry<Data, Integer> entry;
+		Map.Entry<SimpleData, Integer> entry;
 		for(int data_i=0; data_i<list.size(); data_i++){
 			entry = list.get(data_i);
 			
-			Data datum = entry.getKey();
+			SimpleData datum = entry.getKey();
 
 			for(double factor : factors){
 				//Util.pl(datum + " going into " + INDEX(datum, factor));
@@ -102,7 +102,7 @@ public class QueryTree {
 				
 	}
 	
-	public ArrayList<Integer> query(Data d){
+	public ArrayList<Integer> query(SimpleData d){
 		ArrayList<Integer> ret = new ArrayList<Integer>();
 		//Util.pl(INDEX(d) + ":" + d);
 		Bin n = TREE.get(INDEX(d));
@@ -121,11 +121,11 @@ public class QueryTree {
 	
 	class Bin{
 		//Presumably sorted
-		ArrayList<Map.Entry<Data, Integer>> entries = new ArrayList<Map.Entry<Data, Integer>>();
+		ArrayList<Map.Entry<SimpleData, Integer>> entries = new ArrayList<Map.Entry<SimpleData, Integer>>();
 		
 		public Bin(){}
 		
-		public void add(Map.Entry<Data, Integer> e){
+		public void add(Map.Entry<SimpleData, Integer> e){
 			entries.add(e);
 		}
 		
@@ -133,11 +133,11 @@ public class QueryTree {
 			return entries.size();
 		}
 		
-		public boolean contains(Map.Entry<Data, Integer> e){
+		public boolean contains(Map.Entry<SimpleData, Integer> e){
 			return entries.contains(e);
 		}
 		
-		public ArrayList<Map.Entry<Data, Integer>> entries(){
+		public ArrayList<Map.Entry<SimpleData, Integer>> entries(){
 			return entries;
 		}
 		
@@ -147,11 +147,11 @@ public class QueryTree {
 	}
 		
 	
-	private int INDEX(Data d){
+	private int INDEX(SimpleData d){
 		return INDEX(d, 0);
 	}
 	
-	private int INDEX(Data d, double factor){
+	private int INDEX(SimpleData d, double factor){
 		if(d.gof + factor <= S_min)
 			return 0;
 		if(d.gof + factor >= S_max)

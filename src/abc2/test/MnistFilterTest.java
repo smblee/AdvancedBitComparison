@@ -111,8 +111,8 @@ public class MnistFilterTest {
 
 		Util.pl(Util.arr_s(I, " "));
 
-		Complex[][] dx_kernel = Sobel.instance().x_left_kernel();
-		Complex[][] dy_kernel = Sobel.instance().y_up_kernel();
+		Complex[][] dx_kernel = Scharr.instance().x_left_kernel();
+		Complex[][] dy_kernel = Scharr.instance().y_up_kernel();
 		Complex[][] Ix, Iy, st;
 		Complex k = Complex.cartesian(0.10);
 
@@ -169,16 +169,18 @@ public class MnistFilterTest {
 				if(R_matrix[v][u].Re != 0){
 					data_0.add(datum);
 				}
-				if(R_matrix[v][u].Re <= -32){
+				if(R_matrix[v][u].Re <= -6553){
+					data_25.add(datum);					
+				}
+				if(R_matrix[v][u].Re <= -11424){
 					data_32.add(datum);
 				}
-				if(R_matrix[v][u].Re <= -40){
+				if(R_matrix[v][u].Re <= -12673){
 					data_40.add(datum);
 				}
 
-				if(R_matrix[v][u].Re <= -25){
+				if(R_matrix[v][u].Re <= -11424){
 					R_matrix[v][u] = Complex.cartesian(1);
-					data_25.add(datum);
 				}
 				else{
 					R_matrix[v][u] = Complex.cartesian(0);

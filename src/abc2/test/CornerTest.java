@@ -10,7 +10,7 @@ import java.util.function.BiFunction;
 
 import abc2._program.PROGRAM;
 import abc2.struct.Complex;
-import abc2.struct.Data;
+import abc2.struct.SimpleData;
 import abc2.util.fn;
 import abc2.util.Util;
 
@@ -62,7 +62,7 @@ public class CornerTest {
 		 sigmaX = x;
 		 sigmaY = y;
 
-		 Data d = Harris_Stephens.processImageR(
+		 SimpleData d = Harris_Stephens.processImageR(
 				I, 
 				Prewitt.instance().x_right_kernel(), 
 				fn.Gaussian(A, x0, y0, sigmaX, sigmaY), 

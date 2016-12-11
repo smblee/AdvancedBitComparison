@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 import abc2.struct.Complex;
-import abc2.struct.Data;
+import abc2.struct.SimpleData;
 import abc2.util.MathTools;
 import abc2.util.Matrix;
 import abc2.util.Util;
@@ -23,7 +23,7 @@ public class Harris_Stephens{
 	 * @param w window function
 	 * @return Data{a, b, S}
 	 */
-	public static Data processImageEigen(Complex[][] image, 
+	public static SimpleData processImageEigen(Complex[][] image, 
 			Complex[][] derivative_kernel, 
 			BiFunction<Integer, Integer, Double> w
 			){
@@ -65,7 +65,7 @@ public class Harris_Stephens{
 	 * @param k : a factor as a signum
 	 * @return Data{a, b, S}
 	 */
-	public static Data processImageR(
+	public static SimpleData processImageR(
 			Complex[][] image, 
 			Complex[][] derivative_kernel, 
 			BiFunction<Integer, Integer, Double> w, 
@@ -103,13 +103,13 @@ public class Harris_Stephens{
 
 		//Util.pl("\ncount : " + data.size());
 		//Data ret = MathTools.linear_regression(data);
-		Data ret = MathTools.inverse_linear_regression_R2(data);
+		SimpleData ret = MathTools.inverse_linear_regression_R2(data);
 		
 		return ret;
 	}
 	
 	
-	public static Data[] forestImageR(
+	public static SimpleData[] forestImageR(
 			Complex[][] image, 
 			Complex[][] derivative_kernel, 
 			BiFunction<Integer, Integer, Double> w, 
@@ -146,7 +146,7 @@ public class Harris_Stephens{
 		}
 
 		//Util.pl("\ncount : " + data.size());
-		Data[] ret = {MathTools.linear_regression_R2(data),
+		SimpleData[] ret = {MathTools.linear_regression_R2(data),
 				MathTools.inverse_linear_regression_R2(data)};
 		
 		return ret;

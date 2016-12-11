@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import abc2.struct.Data;
+import abc2.struct.SimpleData;
 
 public class MathTools {
 	
@@ -17,7 +17,7 @@ public class MathTools {
 //		Util.pl(regression(Arrays.asList(d1, d2, d3, d4)));
 //	}
 //	
-	public static Data linear_regression_Var(List<Double[]> data){
+	public static SimpleData linear_regression_Var(List<Double[]> data){
 		double a_numerator, a_denominator, a, b, S;
 		double n, x, y, x_sqr_sum, xy_sum, x_sum, y_sum, d;
 		
@@ -50,7 +50,7 @@ public class MathTools {
 		if(a_denominator == 0){
 			a = Double.MAX_VALUE;
 			b = 0;
-			return new Data(a, b, 0);
+			return new SimpleData(a, b, 0);
 		}
 		S = 0;
 		for(Double[] point : data){
@@ -62,14 +62,14 @@ public class MathTools {
 		S = S / n;
 		
 		
-		Data ret = new Data(a, b, S);
+		SimpleData ret = new SimpleData(a, b, S);
 		if(ret.containsNaN()){
 			Util.pl(a_numerator + "/" +  a_denominator + ", " + b);
 		}
 		return ret;		
 	}
 	
-	public static Data linear_regression_R2(List<Double[]> data){
+	public static SimpleData linear_regression_R2(List<Double[]> data){
 		double a_numerator, a_denominator, a, b, R2;
 		double n, x, y, x_sqr_sum, xy_sum, x_sum, y_sum, d, y_bar, SSres, SStot;
 		
@@ -101,7 +101,7 @@ public class MathTools {
 		if(a_denominator == 0){
 			a = Double.MAX_VALUE;
 			b = 0;
-			return new Data(a, b, 0);
+			return new SimpleData(a, b, 0);
 		}
 		
 
@@ -120,14 +120,14 @@ public class MathTools {
 
 		R2 = 1 - SSres  / SStot;
 		
-		Data ret = new Data(a, b, R2);
+		SimpleData ret = new SimpleData(a, b, R2);
 		if(ret.containsNaN()){
 			Util.pl(a_numerator + "/" +  a_denominator + ", " + b);
 		}
 		return ret;		
 	}
 	
-	public static Data inverse_linear_regression_R2(List<Double[]> data){
+	public static SimpleData inverse_linear_regression_R2(List<Double[]> data){
 		double a_numerator, a_denominator, a, b, R2;
 		double n, x, y, d, y_sum, one_over_x_sum, one_over_x_sqr_sum, y_over_x_sum, y_bar, SSres, SStot;
 		
@@ -159,7 +159,7 @@ public class MathTools {
 		if(a_denominator == 0){
 			a = Double.MAX_VALUE;
 			b = Double.MAX_VALUE;
-			return new Data(a, b, 0);
+			return new SimpleData(a, b, 0);
 		}
 
 		y_bar = y_sum / n;
@@ -178,7 +178,7 @@ public class MathTools {
 		R2 = 1 - SSres  / SStot;
 		
 		
-		Data ret = new Data(a, b, R2);
+		SimpleData ret = new SimpleData(a, b, R2);
 		if(ret.containsNaN()){
 			Util.pl(a_numerator + "/" +  a_denominator + ", " + b);
 		}
