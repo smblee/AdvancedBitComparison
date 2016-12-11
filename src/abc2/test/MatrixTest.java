@@ -1,5 +1,7 @@
-package abc2.struct;
+package abc2.test;
 
+import abc2.struct.Complex;
+import abc2.util.Matrix;
 import abc2.util.Util;
 
 public class MatrixTest {

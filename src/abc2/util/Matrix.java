@@ -1,6 +1,6 @@
-package abc2.struct;
+package abc2.util;
 
-import abc2.util.Util;
+import abc2.struct.Complex;
 
 public class Matrix{
 	public static boolean multiplicable(Complex[][] A, Complex[][] B){

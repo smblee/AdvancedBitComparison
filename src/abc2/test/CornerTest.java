@@ -1,5 +1,6 @@
-package abc2.imageprocess.corner;
+package abc2.test;
 
+import abc2.imageprocess.corner.Harris_Stephens;
 import abc2.imageprocess.corner.filter.ImageDerivative;
 import abc2.imageprocess.corner.filter.Prewitt;
 
@@ -10,6 +11,7 @@ import java.util.function.BiFunction;
 import abc2._program.PROGRAM;
 import abc2.struct.Complex;
 import abc2.struct.Data;
+import abc2.util.fn;
 import abc2.util.Util;
 
 public class CornerTest {
@@ -63,14 +65,14 @@ public class CornerTest {
 		 Data d = Harris_Stephens.processImageR(
 				I, 
 				Prewitt.instance().x_right_kernel(), 
-				ImageDerivative.Gaussian(A, x0, y0, sigmaX, sigmaY), 
+				fn.Gaussian(A, x0, y0, sigmaX, sigmaY), 
 				Complex.cartesian(0.0)
 				);
 		 
 		 Complex[][] R = Harris_Stephens.ImageR(
 				 I, 
 				 Prewitt.instance().x_right_kernel(), 
-				 ImageDerivative.Gaussian(A, x0, y0, sigmaX, sigmaY),
+				 fn.Gaussian(A, x0, y0, sigmaX, sigmaY),
 				 Complex.cartesian(0.0)
 				 );
 		 Util.pl(Util.arr_s(R, " "));
@@ -99,7 +101,7 @@ public class CornerTest {
 		Complex[][] R = Harris_Stephens.ImageR(
 				I, 
 				Prewitt.instance().x_right_kernel(), 
-				ImageDerivative.Gaussian(A, x0, y0, sigmaX, sigmaY), 
+				fn.Gaussian(A, x0, y0, sigmaX, sigmaY), 
 				Complex.cartesian(0.0)
 				);
 		long end = System.currentTimeMillis();
@@ -120,7 +122,7 @@ public class CornerTest {
 		sigmaX = 100;
 		sigmaY = 100;
 		
-		BiFunction<Integer, Integer, Double> b = ImageDerivative.Gaussian(A, x0, y0, sigmaX, sigmaY);
+		BiFunction<Integer, Integer, Double> b = fn.Gaussian(A, x0, y0, sigmaX, sigmaY);
 		
 		for(int i=0; i<100; i++)
 			for(int j=0; j<100; j++)
@@ -148,7 +150,7 @@ public class CornerTest {
 		Complex[][] R = Harris_Stephens.ImageR(
 				I, 
 				Prewitt.instance().x_right_kernel(), 
-				ImageDerivative.Gaussian(A, x0, y0, sigmaX, sigmaY), 
+				fn.Gaussian(A, x0, y0, sigmaX, sigmaY), 
 				Complex.cartesian(0.0)
 				);
 		long end = System.currentTimeMillis();

@@ -52,7 +52,7 @@ public class Complex {
 	}
 	
 	public String toString(){
-		return "" + ((int) Re);
+		return ((int) Re) + "";
 	}
 //	public String toString(){
 //		if(Im < (1.0 / (1 << 30)))

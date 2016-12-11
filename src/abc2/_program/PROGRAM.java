@@ -21,7 +21,9 @@ import abc2.struct.Complex;
 import abc2.struct.Data;
 import abc2.struct.Map2;
 import abc2.struct.SComparator;
+import abc2.util.MathTools;
 import abc2.util.Util;
+import abc2.util.fn;
 
 public class PROGRAM {
 	private static int C = 2;
@@ -252,7 +254,7 @@ public class PROGRAM {
 		Data[] d = Harris_Stephens.forestImageR(
 				I, 
 				Prewitt.instance().x_right_kernel(), 
-				ImageDerivative.Gaussian(A, x0, y0, sigmaX, sigmaY), 
+				fn.Gaussian(A, x0, y0, sigmaX, sigmaY), 
 				Complex.cartesian(0.0)
 				);
 		

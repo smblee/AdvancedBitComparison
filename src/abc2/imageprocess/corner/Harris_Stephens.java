@@ -10,8 +10,8 @@ import java.util.function.BiFunction;
 
 import abc2.struct.Complex;
 import abc2.struct.Data;
-import abc2.struct.MathTools;
-import abc2.struct.Matrix;
+import abc2.util.MathTools;
+import abc2.util.Matrix;
 import abc2.util.Util;
 
 public class Harris_Stephens{
@@ -103,7 +103,7 @@ public class Harris_Stephens{
 
 		//Util.pl("\ncount : " + data.size());
 		//Data ret = MathTools.linear_regression(data);
-		Data ret = MathTools.inverse_linear_regression(data);
+		Data ret = MathTools.inverse_linear_regression_R2(data);
 		
 		return ret;
 	}
@@ -147,7 +147,7 @@ public class Harris_Stephens{
 
 		//Util.pl("\ncount : " + data.size());
 		Data[] ret = {MathTools.linear_regression_R2(data),
-				MathTools.inverse_linear_regression(data)};
+				MathTools.inverse_linear_regression_R2(data)};
 		
 		return ret;
 	}

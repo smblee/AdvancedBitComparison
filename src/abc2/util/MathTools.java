@@ -1,9 +1,10 @@
-package abc2.struct;
+package abc2.util;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiFunction;
 
-import abc2.util.Util;
+import abc2.struct.Data;
 
 public class MathTools {
 	
@@ -126,9 +127,9 @@ public class MathTools {
 		return ret;		
 	}
 	
-	public static Data inverse_linear_regression(List<Double[]> data){
-		double a_numerator, a_denominator, a, b, S;
-		double n, x, y, d, y_sum, one_over_x_sum, one_over_x_sqr_sum, y_over_x_sum;
+	public static Data inverse_linear_regression_R2(List<Double[]> data){
+		double a_numerator, a_denominator, a, b, R2;
+		double n, x, y, d, y_sum, one_over_x_sum, one_over_x_sqr_sum, y_over_x_sum, y_bar, SSres, SStot;
 		
 		n = data.size();
 		if(n == 0.0)
@@ -160,22 +161,27 @@ public class MathTools {
 			b = Double.MAX_VALUE;
 			return new Data(a, b, 0);
 		}
-		S = 0;
+
+		y_bar = y_sum / n;
+		
+		SSres = 0;
+		SStot = 0;
+		
+		double expectation;
 		for(Double[] point : data){
 			x = point[0]; y = point[1];
-			d = (y - a / x - b);
-			S += d * d;
+			expectation = a / x + b;
+			SSres += (y - expectation) * (y - expectation);
+			SStot += (y - y_bar) * (y - y_bar);
 		}
+
+		R2 = 1 - SSres  / SStot;
 		
-		S = S / n;
 		
-		
-		Data ret = new Data(a, b, S);
+		Data ret = new Data(a, b, R2);
 		if(ret.containsNaN()){
 			Util.pl(a_numerator + "/" +  a_denominator + ", " + b);
 		}
 		return ret;		
 	}
-	
-	
 }

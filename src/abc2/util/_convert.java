@@ -5,7 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-public class nonprogram_convert{
+public class _convert{
 	static Scanner sc = new Scanner(System.in);
 	static String line;
 	static String[] w;
