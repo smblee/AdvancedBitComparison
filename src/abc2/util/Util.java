@@ -221,7 +221,7 @@ public class Util {
 			double[] arr = arr2[i];
 			for(int j=0; j<arr.length; j++){
 				double o = arr[j];
-				sb.append(o);
+				sb.append(String.format("%.2f",o));
 				sb.append(s);
 			}
 			sb.deleteCharAt(sb.length() - 1);
