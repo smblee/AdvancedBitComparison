@@ -14,4 +14,7 @@ public interface Data {
 		Comparable b = other.getData()[axis];
 		return a.compareTo(b);
 	}
+	
+	public double distance(Data other);
+	public double axis_distance(Data other, int axis);
 }
