@@ -143,10 +143,13 @@ public class MnistFilterTest {
 
 
 		/* process image */
-		for(int v=1; v<x; v++){
-			for(int u=1; u<y; u++) {
+		for(int v=0; v<x; v++){
+			for(int u=0; u<y; u++) {
 				/* histogram */
-				if (img[v][u] > 0) {
+				if (img[v][u] == 0) {
+					hist.decrementCol(u);
+					hist.decrementRow(v);
+				} else {
 					hist.incrementCol(u);
 					hist.incrementRow(v);
 				}
