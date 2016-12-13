@@ -1,5 +1,7 @@
 package abc2.struct;
 
+import abc2.util.Util;
+
 /**
  * class created for Kdtree
  * @author Art

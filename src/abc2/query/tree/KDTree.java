@@ -45,13 +45,13 @@ public class KDTree<T extends Data> {
 		public int size(){ return size; }
 
 		Node(List<T> _points, int _depth){
-			Util.pl("creating node with " + _points);
+			//Util.pl("creating node with " + _points);
 			depth = _depth;
 			axis = depth % dimen;
 
 			size = _points.size();
 
-			isLeaf = size == 1;
+			isLeaf = size == 1 || size == 0;
 
 			//How to select median?
 
@@ -131,19 +131,14 @@ public class KDTree<T extends Data> {
 		Node current = root;
 		while(current.size() > k){
 			int axis = current.axis;
-			Util.pl(current.median);
 			if(query_data.compareTo(current.median, axis) <= 0){
 				current = current.LC();
-
-				Util.pl("goes left");
 			}else{
 				current = current.RC();
-				
-				Util.pl("goes right");
 			}
 		}
 
-		Util.pl(k + ":" + current.size());
+	
 		/* recursively add our first ~k best_data*/
 		insertTree(query_data, current.parent, k);
 
@@ -163,7 +158,6 @@ public class KDTree<T extends Data> {
 
 		inverse_query(query_data, current, k, root);
 
-		System.out.println(k);
 		Data[] ret = new Data[k];
 		List<DataDistPair> ddp_arr = best_data.toList();
 		for(int i=0; i<k; i++){
@@ -175,10 +169,6 @@ public class KDTree<T extends Data> {
 	private void insertTree(T query_data, Node<Data> n, int k){
 		if(n.size() == 0) return;
 
-		Util.pl(n.parent.median);
-		Util.pl(n.parent.LC == n);
-		Util.pl(n.parent.RC == n);
-		Util.pl(n.median);
 		Data data = n.median;
 		double dist = n.median.distance(query_data);
 		insert(data, dist, k);

@@ -119,17 +119,17 @@ public class PROGRAM {
 		//			}
 		//		}
 
-
-		Util.pl("listof_data_map_folder1");
-		Util.pl(listof_data_map_folder1);
-		Util.pl("listof_data_map_folder2");
-		Util.pl(listof_data_map_folder2);
-		Util.pl("listof_data_lists_folder1");
-		Util.pl(listof_data_lists_folder1);
-		Util.pl(listof_data_lists_folder1.get(0).get(0).size());
-		Util.pl("listof_data_lists_folder2");
-		Util.pl(listof_data_lists_folder2);
-		Util.pl(listof_data_lists_folder2.get(0).get(0).size());
+//
+//		Util.pl("listof_data_map_folder1");
+//		Util.pl(listof_data_map_folder1);
+//		Util.pl("listof_data_map_folder2");
+//		Util.pl(listof_data_map_folder2);
+//		Util.pl("listof_data_lists_folder1");
+//		Util.pl(listof_data_lists_folder1);
+//		Util.pl(listof_data_lists_folder1.get(0).get(0).size());
+//		Util.pl("listof_data_lists_folder2");
+//		Util.pl(listof_data_lists_folder2);
+//		Util.pl(listof_data_lists_folder2.get(0).get(0).size());
 		/* query tree */
 		
 		for(int i=0; i<tools_count; i++){
@@ -149,7 +149,8 @@ public class PROGRAM {
 			int f1_img_index = file_map.getValue(f1_imgname);
 			
 
-			HashMap<SimpleData, Integer> table = new HashMap<SimpleData, Integer>();
+			// index to count
+			HashMap<Integer, Integer> table = new HashMap<Integer, Integer>();
 			for(int i=0; i<tools_count; i++){
 				DLMap<Integer, SimpleData> folder1_data_map = listof_data_map_folder1.get(i);
 				
@@ -183,24 +184,31 @@ public class PROGRAM {
 							sd = ((Data_a_b) datum).sd;
 						else
 							sd = ((Data_gof) datum).sd;
+
+						DLMap<Integer, SimpleData> tool_i_data_map_folder2 = listof_data_map_folder2.get(i);
+						int index = tool_i_data_map_folder2.getKey(sd);
+								
 						if(table.containsKey(sd)){
-							table.put(sd, table.get(sd) + 1);
+							table.put(index, table.get(sd) + 1);
 						}else{
-							table.put(sd, 1);
+							table.put(index, 1);
 						}
 
 					}
 				}
 			}
 			
-			ArrayList<Map.Entry<SimpleData, Integer>> list = 
-					new ArrayList<Map.Entry<SimpleData, Integer>>(table.entrySet());
+			ArrayList<Map.Entry<Integer, Integer>> list = 
+					new ArrayList<Map.Entry<Integer, Integer>>(table.entrySet());
 			
 			list.sort((e1, e2) -> e1.getValue() - e2.getValue());
 			
+			Util.pl(list);
+			
 			Util.p(f1_imgname + " is similar to: ");
 			for(int i=0; i<query_size; i++){
-				Util.p(file_map.getKey(list.get(i)) + " ");
+				//Util.p(" " + list.get(i).getKey() + " = ");
+				Util.p(file_map.getKey(list.get(i).getKey()) + " ");
 			}
 			Util.p("\n");			
 		}
