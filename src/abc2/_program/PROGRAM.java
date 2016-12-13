@@ -80,10 +80,10 @@ public class PROGRAM {
 		Util.pl("preparation: " + (s2 - start) + " ms");					//
 
 		for(String filename : f1_list){
-			processImageKDTree(folder1 + "/" + filename, file_map.getValue(filename), false);
+			processImage(folder1 + "/" + filename, file_map.getValue(filename), false);
 		}
 		for(String filename : f2_list){
-			processImageKDTree(folder2 + "/" + filename, file_map.getValue(filename), true);
+			processImage(folder2 + "/" + filename, file_map.getValue(filename), true);
 		}
 		
 		long s3 = System.currentTimeMillis();								//
@@ -324,6 +324,16 @@ public class PROGRAM {
 			file_map.put(filename, index++);
 		for(String filename : f2_list)
 			file_map.put(filename, index++);
+	}
+	
+	/**
+	 * process image tool by tool
+	 * @param path
+	 * @param img_index
+	 * @param updateRange
+	 */
+	public static void processImage(String path, int img_index, boolean updateRange){
+		processImageKDTree(path, img_index, updateRange);
 	}
 	
 	public static void processImageKDTree(String path, int img_index, boolean updateRange){
