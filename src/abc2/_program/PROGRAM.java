@@ -1,27 +1,21 @@
 package abc2._program;
 
 import abc2.imageprocess.corner.Harris_Stephens;
-import abc2.imageprocess.corner.filter.ImageDerivative;
 import abc2.imageprocess.corner.filter.Prewitt;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.TreeMap;
 
 import abc2.query.tree.QueryTree;
 import abc2.struct.Complex;
 import abc2.struct.SimpleData;
-import abc2.struct.Map2;
-import abc2.struct.SComparator;
-import abc2.util.MathTools;
+import abc2.struct.DoubleLinkedMap;
 import abc2.util.Util;
 import abc2.util.fn;
 
@@ -32,10 +26,10 @@ public class PROGRAM {
 	private static BufferedReader br;
 
 	private static int row_l, col_l;
-	private static ArrayList<Map2<Integer, SimpleData>> L1, L2, M1, M2, S1, S2;
+	private static ArrayList<DoubleLinkedMap<Integer, SimpleData>> L1, L2, M1, M2, S1, S2;
 	private static QueryTree LTree, MTree, STree;
 
-	private static Map2<String, Integer> file_map;
+	private static DoubleLinkedMap<String, Integer> file_map;
 
 	private static String folder1, folder2, outputfolder;
 	private static File f1, f2, outf;
@@ -48,8 +42,10 @@ public class PROGRAM {
 		int index;
 		int query_size;
 
-		if(args.length < 4)
-			Util.pf("bad args count: %d; REQUIRED 4 \n", args.length);
+		if(args.length < 4) {
+			printUsage();
+			System.exit(1);
+		}
 
 		folder1 = args[0];
 		folder2 = args[1];
@@ -96,7 +92,7 @@ public class PROGRAM {
 		Util.pl(col_l + " x " + row_l);
 
 		/* index the files */
-		file_map = new Map2<String, Integer>();
+		file_map = new DoubleLinkedMap<String, Integer>();
 		index = 0;
 		for(String filename : f1_list)
 			file_map.put(filename, index++);
@@ -214,6 +210,10 @@ public class PROGRAM {
 		//		LTree.query(d)
 	}
 
+	private static void printUsage() {
+		Util.pf("bad input. Need 4 arguments. Usage Ex. \"./my_program ./database ./query ./output 10\"  \n");
+	}
+
 	public static void processImage(String path, int index, boolean updateRange){
 		int[][] image;
 		image = Util.read(path, row_l, col_l);
@@ -282,20 +282,20 @@ public class PROGRAM {
 	
 	//
 	private static void init(){
-		L1 = new ArrayList<Map2<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		M1 = new ArrayList<Map2<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		S1 = new ArrayList<Map2<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		L2 = new ArrayList<Map2<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		M2 = new ArrayList<Map2<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		S2 = new ArrayList<Map2<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		L1 = new ArrayList<DoubleLinkedMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		M1 = new ArrayList<DoubleLinkedMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		S1 = new ArrayList<DoubleLinkedMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		L2 = new ArrayList<DoubleLinkedMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		M2 = new ArrayList<DoubleLinkedMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		S2 = new ArrayList<DoubleLinkedMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
 	
 		for(int i=0; i<C; i++){
-			L1.add(new Map2<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			M1.add(new Map2<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			S1.add(new Map2<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			L2.add(new Map2<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			M2.add(new Map2<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			S2.add(new Map2<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+			L1.add(new DoubleLinkedMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+			M1.add(new DoubleLinkedMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+			S1.add(new DoubleLinkedMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+			L2.add(new DoubleLinkedMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+			M2.add(new DoubleLinkedMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+			S2.add(new DoubleLinkedMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
 		}
 
 		a_min = new double[C];

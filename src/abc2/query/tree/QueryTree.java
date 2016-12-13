@@ -1,19 +1,16 @@
 package abc2.query.tree;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
 import abc2.struct.SimpleData;
-import abc2.struct.Entry;
-import abc2.struct.Map2;
-import abc2.struct.SComparator;
+import abc2.struct.DoubleLinkedMap;
 import abc2.util.Util;
 
 public class QueryTree {
-	private Map2<Integer, SimpleData> LMS;
+	private DoubleLinkedMap<Integer, SimpleData> LMS;
 	private int query_size, f2_total_images;
 	
 	private double  bin_count, bin_width, bin_width_shadow;
@@ -24,7 +21,7 @@ public class QueryTree {
 	private double[] S_range;
 	
 	//uses two HashMaps
-	public QueryTree(Map2<Integer, SimpleData> _LMS, 
+	public QueryTree(DoubleLinkedMap<Integer, SimpleData> _LMS,
 			double[] a_range, double[] b_range, double[] S_range,
 			int _f2_total_images, int _query_size){
 		LMS = _LMS;	

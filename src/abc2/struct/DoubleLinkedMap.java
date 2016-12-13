@@ -5,19 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class Map2<K, V>{
+public class DoubleLinkedMap<K, V>{
 	private Map<K, V> forth;
 	private Map<V, K> back;
 	
 	public Map<K, V> forth() { return forth; };
 	public Map<V, K> back()  { return back;  };
 	
-	public Map2(){
+	public DoubleLinkedMap(){
 		forth = new HashMap<K, V>();
 		back = new HashMap<V, K>();
 	}
 	
-	public Map2(Map<K, V> _forth, Map<V, K> _back){
+	public DoubleLinkedMap(Map<K, V> _forth, Map<V, K> _back){
 		forth = _forth;
 		back = _back;
 	}

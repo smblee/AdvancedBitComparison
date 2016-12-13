@@ -1,11 +1,8 @@
 package abc2._program;
 
-import abc2.imageprocess.corner.Harris_Stephens;
-import abc2.imageprocess.corner.filter.ImageDerivative;
-import abc2.imageprocess.corner.filter.Prewitt;
-import abc2.imageprocess.corner.filter.RobertsCross;
-import abc2.imageprocess.corner.filter.Scharr;
-import abc2.imageprocess.corner.filter.Sobel;
+import abc2.struct.Histogram;
+import abc2.util.MathTools;
+import abc2.util.Util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,11 +10,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import abc2.struct.Complex;
-import abc2.util.MathTools;
-import abc2.util.Matrix;
-import abc2.util.Util;
 
 public class MnistFilterTest {
 	private static FileReader fr; 
@@ -51,9 +43,6 @@ public class MnistFilterTest {
 		f1_list = f1.list((dir, name) -> !name.startsWith("."));
 		f2_list = f2.list((dir, name) -> !name.startsWith("."));
 
-		//Util.pl(folder1 + "/" + f1_list[0]);
-		//if(false){
-		/* figure out filesize */
 		row_l = col_l = 0;
 		fr = null; br = null;
 		try{
@@ -84,33 +73,45 @@ public class MnistFilterTest {
 		Util.pl(col_l + " x " + row_l);
 
 		for(String filename: f1_list) {
+			Util.pl("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			Util.pl(folder1 + "/" + filename);
-			show(folder1 + "/" + filename);
+			process(folder1 + "/" + filename);
+			Util.pl("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
 		}
 		for(String filename: f2_list) {
+			Util.pl("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			Util.pl(folder2 + "/" + filename);
-			show(folder2 + "/" + filename);
+			process(folder2 + "/" + filename);
+			Util.pl("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		}
 		
 	}
-	
-	private static void show(String path){
+
+
+	/**
+	 * Process the image
+	 * Generates the following
+	 * 1. One dimentional array of the image. (?)
+	 * 2. col/row histogram
+	 * 3. Kernel filtered image
+	 * 4. Gradient image (?)
+	 * 5. Edge detected image
+	 * @param path
+	 */
+	private static void process(String path){
 		int x, y;
 
 		int[][] img;
 		img = Util.read(path, row_l, col_l);
 		
-		
 		x = img.length;
 		y = img[0].length;
-//		Complex[][] I = new Complex[x][y];
-//		for(int i=0; i<x; i++)
-//			for(int j=0; j<y; j++)
-//				I[i][j] = Complex.cartesian(img[i][j]);
 
 		Util.pl("original");
 		Util.pl(Util.arr_s(img, " "));
-		
+
+		/* build 1d array for the image. REMOVE IF NOT NEEDED */
 		int[] one_d = new int[x * y];
 		int i=0;
 		for(int u=0; u<y; u++){
@@ -118,8 +119,11 @@ public class MnistFilterTest {
 				one_d[i++] = img[v][u];
 			}
 		}
-		Util.pl(Util.arr_s(one_d, " "));
+//		Util.pl(Util.arr_s(one_d, " "));
 
+
+
+		/* initialize variables */
 		float[][] kernelx = {{-1, 0, 1},
                 {-2, 0, 2},
                 {-1, 0, 1}};
@@ -129,62 +133,88 @@ public class MnistFilterTest {
                 {1,  2,  1}};
 
 
-		double[][] outputimage = new double[x][y];
+		double[][] img_kernelFiltered = new double[x][y];
+		double[][] gradientimage = new double[x][y];
+
 		double[][] ix = new double[x][y];
 		double[][] iy = new double[x][y];
 
-		double[][] gradientimage = new double[x][y];
-		for(int v=1; v<x-2; v++){
-			for(int u=1; u<y-2; u++){
+		Histogram hist = new Histogram(x, y);
 
 
-				double magX = 0.0, magY = 0.0; // this is your magnitude
+		/* process image */
+		for(int v=1; v<x; v++){
+			for(int u=1; u<y; u++) {
+				/* histogram */
+				if (img[v][u] > 0) {
+					hist.incrementCol(u);
+					hist.incrementRow(v);
+				}
 
-					for(int a = 0; a < 3; a++)
-					{
-						for(int b = 0; b < 3; b++)
-						{
-//							Util.pl((v + a - 1) + " : " + (u + b - 1));
+				/* kernel filtering */
+				if (v > 0 && u > 0 && v < x - 2 && u < y - 2) {
+					double magX = 0.0, magY = 0.0;
+
+					for (int a = 0; a < 3; a++) {
+						for (int b = 0; b < 3; b++) {
 							magX += img[v + a - 1][u + b - 1] * kernelx[a][b];
 							magY += img[v + a - 1][u + b - 1] * kernely[a][b];
 						}
 					}
 
-//					Util.pl(magX + " : " + magY);
-					double mag = Math.abs(magX) + Math.abs(magY);
-//					double mag = (Math.sqrt(magX * magX + magY * magY));
+					// faster method
+//					double mag = Math.abs(magX) + Math.abs(magY);
+					double mag = (Math.sqrt(magX * magX + magY * magY));
 					double gradient = Math.atan(magY / magX);
 
-					outputimage[v][u] = mag;
+					img_kernelFiltered[v][u] = mag;
 					ix[v][u] = magX;
 					iy[v][u] = magY;
 					gradientimage[v][u] = gradient;
+				}
 			}
 		}
 
-		Util.pl("converted");
+
+		Util.pl("finished processing");
+
+		Util.pl(hist);
+
+
+		/* work with the kernel filtered image */
+
+		/*	generate the following
+		  1. Linear Regression
+		  2. edge detected image after filtering through threshold.
+		  3. gradient image after filtering through threshold.
+ 		 */
 
 		List<Double[]> data = new ArrayList<Double[]>();
+		int[][] img_edgeDetected = new int[x][y];
+		int[][] img_gradient = new int[x][y];
+		double threshold = 4.1;
 
-		int[][] XX = new int[x][y];
-		int[][] XXX = new int[x][y];
 		for(int v=0; v<x; v++){
 			for(int u=0; u<y; u++){
-				if(outputimage[v][u] >= 4.1) {
+				if(img_kernelFiltered[v][u] >= threshold) {
 					Double[] datum = {v * 1.0, u * 1.0};
-
 					data.add(datum);
 				}
-				XX[v][u] = outputimage[v][u] >= 4.1 ? 1 : 0;
-				XXX[v][u] = gradientimage[v][u] == 0.0 ? 0 : 1;
+				img_edgeDetected[v][u] = img_kernelFiltered[v][u] >= threshold ? 1 : 0;
+				img_gradient[v][u] = gradientimage[v][u] == 0.0 ? 0 : 1;
 			}
 		}
-		Util.pl("mag");
-		Util.pl(Util.arr_s(outputimage, " "));
-		Util.pl("XX");
-		Util.pl(Util.arr_s(XX, " "));
+		Util.pl("img_edgeDetected");
+		Util.pl(Util.arr_s(img_edgeDetected, " "));
 		Util.pl(MathTools.linear_regression_R2(data));
-		//MathTools.orthogonal(outputimage, 0, 0);
+
+
+
+
+
+
+
+
 
 		double[][] yo =
 				{{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -231,80 +261,6 @@ public class MnistFilterTest {
 //		Util.pl(MathTools.linear_regression_R2(data));
 ///////////////////////////////////////////////////
 
-//		Util.pl("magX");
-//		Util.pl(Util.arr_s(ix, " "));
-//		Util.pl("magY");
-//		Util.pl(Util.arr_s(iy, " "));
-
-
-//		Util.pl("gradient");
-//		Util.pl(Util.arr_s(XXX, " "));
-
-		
-		
-//
-//		Util.pl(Util.arr_s(I, " "));
-//		
-////		Complex[][] derivative_kernel = Sobel.instance().x_right_kernel();
-//		Complex[][] dx_kernel = Sobel.instance().x_left_kernel();
-//		Complex[][] dy_kernel = Sobel.instance().y_up_kernel();
-//		Complex[][] Ix, Iy, st;
-//		Complex k = Complex.cartesian(0);
-//		
-//
-//
-//		Ix = ImageDerivative.derivative(I, dx_kernel);
-//		Iy = ImageDerivative.derivative(I, dy_kernel);
-//
-//		
-////		Ix = ImageDerivative.derivative(I, derivative_kernel);
-////		Iy = ImageDerivative.derivative(I, Matrix.transpose(derivative_kernel));
-//
-//		Util.pl("IX");
-//		Util.pl(Util.arr_s(Ix, " "));
-//		Util.pl("IX");
-//		
-//
-//		Util.pl("IY");
-//		Util.pl(Util.arr_s(Ix, " "));
-//		Util.pl("IY");
-//
-//		double A, x0, y0, sigmaX, sigmaY;
-//		
-//		A = 1.0;
-//		x0 = 0;
-//		y0 = 0;
-//		sigmaX = x;
-//		sigmaY = y;
-//		
-//		
-//		Complex[][] R_matrix = new Complex[x][y];
-//		
-//		List<Double[]> data = new ArrayList<Double[]>();
-//		for(int v=0; v < col_l; v++){
-//			for(int u=0; u < row_l; u++){
-//				
-////				st = Harris_Stephens.structure_tensor(Ix, Iy, u, v,
-////						ImageDerivative.Gaussian(A, x0, y0, sigmaX, sigmaY));
-////				
-////				R_matrix[v][u] =  Harris_Stephens.R(st, k);
-//				R_matrix[v][u] = Ix[v][u].mult(Ix[v][u]).add(Iy[v][u].mult(Iy[v][u])).sqrt();
-//					//Util.pl("(" + u + ", " + v + ")");
-//				if(R_matrix[v][u].Re != 0){
-//					R_matrix[v][u] = Complex.cartesian(1);
-//					Util.pl("(" + u  + ", " +  v  + ")");
-//					Double[] datum = {u*1.0, v*1.0};
-//					data.add(datum);
-//				}
-//				//
-//				//ret[v][u] = R(st, k);
-//			}
-//		}
-//		
-//		
-//		Util.pl(Util.arr_s(R_matrix, " "));
-//		
-//		Util.pl(MathTools.linear_regression_R2(data));
 	}
 
 }
