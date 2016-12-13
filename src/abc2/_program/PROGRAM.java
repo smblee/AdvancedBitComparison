@@ -1,5 +1,6 @@
 package abc2._program;
 
+import abc2.bktree.*;
 import abc2.imageprocess.corner.Harris_Stephens;
 import abc2.imageprocess.corner.filter.CornerFilter;
 import abc2.imageprocess.corner.filter.ImageDerivative;
@@ -11,25 +12,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import abc2.query.tree.KDTree;
 import abc2.query.tree.QueryTree;
-import abc2.struct.Complex;
-import abc2.struct.Data;
-import abc2.struct.Data_a_b;
-import abc2.struct.Data_gof;
-import abc2.struct.SimpleData;
-import abc2.struct.DLMap;
-import abc2.struct.SComparator;
+import abc2.struct.*;
 import abc2.util.MathTools;
 import abc2.util.Util;
 import abc2.util.fn;
+
+import static abc2._program.BKTreeTest.asSortedList;
 
 public class PROGRAM {
 	private static int tools_count = 2;
@@ -49,6 +41,11 @@ public class PROGRAM {
 	// list of various tool generated Different data sets(lists).
 	private static ArrayList<ArrayList<ArrayList<Data>>> listof_data_lists_folder1, listof_data_lists_folder2;
 	private static ArrayList<ArrayList<KDTree>> Forest;
+
+	private static MutableBkTree bktree_col;
+	private static MutableBkTree bktree_row;
+	private static Map<Integer, Data_stupidhash> stupidhashmap;
+
 
 
 	private static String folder1, folder2, outputfolder;
@@ -199,7 +196,48 @@ public class PROGRAM {
 					}
 				}
 			}
-			
+
+			System.out.println("********* STUPID HASH ********");
+			Data_stupidhash hash_data =  stupidhashmap.get(f1_img_index);
+			BkTreeSearcher<Data_stupidholder> colsearcher = new BkTreeSearcher<>(bktree_col);
+			BkTreeSearcher<Data_stupidholder> rowsearcher = new BkTreeSearcher<>(bktree_row);
+
+			System.out.println("Stupid hashing with image file " + f1_imgname);
+			//TODO: verify row and col
+			System.out.println("Query col with "  + hash_data.col);
+			System.out.println("Query row with " + hash_data.row);
+			Set<BkTreeSearcher.Match<? extends Data_stupidholder>> colmatches = colsearcher.search(new Data_stupidholder(f1_img_index, hash_data.col), (int) 2,(int) Math.sqrt(col_l));
+			Set<BkTreeSearcher.Match<? extends Data_stupidholder>> rowmatches = rowsearcher.search(new Data_stupidholder(f1_img_index, hash_data.row), (int) 2,(int) Math.sqrt(row_l));
+
+			List<BkTreeSearcher.Match<? extends Data_stupidholder>> collst = asSortedList(colmatches);
+			List<BkTreeSearcher.Match<? extends Data_stupidholder>> rowlst = asSortedList(rowmatches);
+
+			List<BkTreeSearcher.Match<? extends Data_stupidholder>> intersection = new ArrayList<>(collst); // use the copy constructor
+			intersection.retainAll(rowlst);
+
+						System.out.println("RESULT: Intersection of row and col");
+			for (BkTreeSearcher.Match<? extends Data_stupidholder> match : intersection)
+				System.out.println(String.format(
+						"%s (distance %d)",
+						file_map.back().get(match.getMatch().img_index),
+						match.getDistance()
+				));
+
+//			System.out.println("Col list");
+//			for (BkTreeSearcher.Match<? extends Data_stupidholder> match : collst)
+//				System.out.println(String.format(
+//						"%s (distance %d)",
+//						file_map.back().get(match.getMatch().img_index),
+//						match.getDistance()
+//				));
+//			System.out.println("Row list");
+//			for (BkTreeSearcher.Match<? extends Data_stupidholder> match : rowlst)
+//				System.out.println(String.format(
+//						"%s (distance %d)",
+//						file_map.back().get(match.getMatch().img_index),
+//						match.getDistance()
+//				));
+
 			ArrayList<Map.Entry<Integer, Integer>> list = 
 					new ArrayList<Map.Entry<Integer, Integer>>(table.entrySet());
 			
@@ -343,15 +381,39 @@ public class PROGRAM {
 	 * @param updateRange
 	 */
 	public static void processImage(String path, int img_index, boolean updateRange){
-		processImageKDTree(path, img_index, updateRange);
-	}
-	
-	public static void processImageKDTree(String path, int img_index, boolean updateRange){
 		int[][] image;
 		image = Util.read(path, row_l, col_l);
+		processImageKDTree(image, img_index, updateRange);
+		processHistogram(image, img_index, image.length, image[0].length);
+	}
+	
+	public static void processImageKDTree(int[][] img, int img_index, boolean updateRange){
+
 
 		//add to LMS;
-		extractStat(image, img_index, updateRange);
+		extractStat(img, img_index, updateRange);
+	}
+
+	private static void processHistogram(int[][] img, int img_index, int width, int height) {
+		Histogram hist = new Histogram(width, height);
+		hist.setThreshold((int) (img.length * 0.25));
+
+		/* process image */
+		for(int v=0; v<width; v++) {
+			for (int u = 0; u < height; u++) {
+				/* histogram */
+//				if (img[v][u] == 0) {
+//					hist.decrementCol(u);
+//					hist.decrementRow(v);
+				if (img[v][u] > 0) {
+					hist.incrementCol(u);
+					hist.incrementRow(v);
+				}
+			}
+		}
+		bktree_col.add(new Data_stupidholder(img_index, hist.colStupidHash()));
+		bktree_row.add(new Data_stupidholder(img_index, hist.rowStupidHash()));
+		stupidhashmap.put(img_index, new Data_stupidhash(hist.colStupidHash(), hist.rowStupidHash()));
 	}
 
 	private static void extractStat(int[][] img, int img_index, boolean updateRange){
@@ -430,7 +492,24 @@ public class PROGRAM {
 		listof_data_lists_folder2 = new ArrayList<ArrayList<ArrayList<Data>>>();
 		
 		Forest = new ArrayList<ArrayList<KDTree>>();
-		
+
+
+		Metric<Data_stupidholder> hammingDistance = (x, y) -> {
+			if (x.hash.length() != y.hash.length())
+				throw new IllegalArgumentException();
+
+			int distance = 0;
+
+			for (int i = 0; i < x.hash.length(); i++)
+				if (x.hash.charAt(i) != y.hash.charAt(i))
+					distance++;
+
+			return distance;
+		};
+		bktree_col = new MutableBkTree<>(hammingDistance);
+		bktree_row = new MutableBkTree<>(hammingDistance);
+		stupidhashmap = new HashMap<>();
+
 		for(int i=0; i<tools_count; i++){
 			listof_data_map_folder1.add(new DLMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
 			listof_data_map_folder2.add(new DLMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
@@ -459,6 +538,7 @@ public class PROGRAM {
 		b_max = new double[tools_count];
 		S_min = new double[tools_count];
 		S_max = new double[tools_count];
+
 		
 		
 	}

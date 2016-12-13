@@ -39,6 +39,7 @@ public final class MutableBkTree<E> implements BkTree<E> {
 
     private final Metric<? super E> metric;
     MutableNode<E> root;
+    public int size;
 
     public MutableBkTree(Metric<? super E> metric) {
         if (metric == null) throw new NullPointerException();
@@ -69,6 +70,7 @@ public final class MutableBkTree<E> implements BkTree<E> {
                 }
             }
         }
+        size++;
     }
 
     private int distance(E x, E y) {

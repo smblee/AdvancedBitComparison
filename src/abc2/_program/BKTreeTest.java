@@ -1,6 +1,7 @@
 package abc2._program;
 
 import abc2.bktree.BkTreeSearcher;
+import abc2.bktree.HammingDistanceMetric;
 import abc2.bktree.Metric;
 import abc2.bktree.MutableBkTree;
 
@@ -30,9 +31,9 @@ public class BKTreeTest {
             return distance;
         };
 
-        MutableBkTree<String> bkTree = new MutableBkTree<>(hammingDistance);
+        MutableBkTree<String> bkTree = new MutableBkTree<>(new HammingDistanceMetric());
 
-        bkTree.addAll("11111", "11100", "10000", "10010", "00000", "01110", "01100", "00001", "00010", "10111");
+        bkTree.addAll("11119", "11100", "10000", "10010", "00000", "01110", "01100", "00001", "00010", "10111");
 //        bkTree.addAll("berets", "carrot", "egrets", "marmot", "packet", "pilots", "purist");
 
         BkTreeSearcher<String> searcher = new BkTreeSearcher<>(bkTree);
