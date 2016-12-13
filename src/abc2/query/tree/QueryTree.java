@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import abc2.struct.SimpleData;
-import abc2.struct.DoubleLinkedMap;
+import abc2.struct.DLMap;
 import abc2.util.Util;
 
 public class QueryTree {
-	private DoubleLinkedMap<Integer, SimpleData> LMS;
+	private DLMap<Integer, SimpleData> LMS;
 	private int query_size, f2_total_images;
 	
 	private double  bin_count, bin_width, bin_width_shadow;
@@ -21,7 +21,7 @@ public class QueryTree {
 	private double[] S_range;
 	
 	//uses two HashMaps
-	public QueryTree(DoubleLinkedMap<Integer, SimpleData> _LMS,
+	public QueryTree(DLMap<Integer, SimpleData> _LMS,
 			double[] a_range, double[] b_range, double[] S_range,
 			int _f2_total_images, int _query_size){
 		LMS = _LMS;	

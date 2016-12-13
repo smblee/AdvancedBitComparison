@@ -1,5 +1,6 @@
 package abc2.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -98,10 +99,14 @@ public class MathTools {
 		a = a_numerator / a_denominator;
 		b = (y_sum - a * x_sum) / n;
 
+		// NEED TO BE CHANGED TO MORE EFFICIENT CODE LATER!
 		if(a_denominator == 0){
-			a = Double.MAX_VALUE;
-			b = 0;
-			return new SimpleData(a, b, 0);
+			ArrayList<Double[]> new_data = new ArrayList<Double[]>();
+			for(Double[] datum : data){
+				Double[] new_datum = {datum[1], datum[0]};
+				new_data.add(new_datum);
+			}
+			return linear_regression_R2(new_data);			
 		}
 		
 
@@ -119,11 +124,7 @@ public class MathTools {
 		}
 
 		R2 = 1 - SSres  / SStot;
-		
 		SimpleData ret = new SimpleData(a, b, R2);
-		if(ret.containsNaN()){
-			Util.pl(a_numerator + "/" +  a_denominator + ", " + b);
-		}
 		return ret;		
 	}
 	

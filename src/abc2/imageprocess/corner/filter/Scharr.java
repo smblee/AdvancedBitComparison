@@ -2,7 +2,7 @@ package abc2.imageprocess.corner.filter;
 
 import abc2.struct.Complex;
 
-public class Scharr {
+public class Scharr implements CornerFilter{
 	private static Object o = new Object();
 	private static Scharr singleton = null;
 	private Scharr (){

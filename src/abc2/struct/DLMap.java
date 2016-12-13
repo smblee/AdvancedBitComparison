@@ -5,19 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class DoubleLinkedMap<K, V>{
+public class DLMap<K, V>{
 	private Map<K, V> forth;
 	private Map<V, K> back;
 	
 	public Map<K, V> forth() { return forth; };
 	public Map<V, K> back()  { return back;  };
 	
-	public DoubleLinkedMap(){
+	public DLMap(){
 		forth = new HashMap<K, V>();
 		back = new HashMap<V, K>();
 	}
 	
-	public DoubleLinkedMap(Map<K, V> _forth, Map<V, K> _back){
+	public DLMap(Map<K, V> _forth, Map<V, K> _back){
 		forth = _forth;
 		back = _back;
 	}
@@ -87,6 +87,11 @@ public class DoubleLinkedMap<K, V>{
 
 	public Set<java.util.Map.Entry<K, V>> entrySet() {
 		return forth.entrySet();
+	}
+	
+	@Override
+	public String toString(){
+		return forth.toString();
 	}
 	
 }

@@ -20,6 +20,80 @@ public class Prewitt implements CornerFilter{
 		return singleton;
 	}
 	
+	/* Initialize Kernel */
+	//kernel
+	private static Complex[][] 
+			prewitt_x_left_kernel = null, 
+			prewitt_x_right_kernel = null,
+			prewitt_y_up_kernel = null, 
+			prewitt_y_down_kernel = null;
+	private static void init_prewitt_kernel(){
+		Complex neg_one = Complex.cartesian(-1, 0);
+		Complex zero = Complex.cartesian(0, 0);
+		Complex one = Complex.cartesian(1, 0);
+		if(prewitt_x_right_kernel == null){
+			prewitt_x_right_kernel = new Complex[3][3];
+			prewitt_x_right_kernel[0][0] = prewitt_x_right_kernel[1][0] = prewitt_x_right_kernel[2][0] = neg_one;
+			prewitt_x_right_kernel[0][1] = prewitt_x_right_kernel[1][1] = prewitt_x_right_kernel[2][1] = zero;
+			prewitt_x_right_kernel[0][2] = prewitt_x_right_kernel[1][2] = prewitt_x_right_kernel[2][2] = one;
+
+		}
+
+		if(prewitt_x_left_kernel == null){
+			prewitt_x_left_kernel = new Complex[3][3];
+			prewitt_x_left_kernel[0][0] = prewitt_x_left_kernel[1][0] = prewitt_x_left_kernel[2][0] = one;
+			prewitt_x_left_kernel[0][1] = prewitt_x_left_kernel[1][1] = prewitt_x_left_kernel[2][1] = zero;
+			prewitt_x_left_kernel[0][2] = prewitt_x_left_kernel[1][2] = prewitt_x_left_kernel[2][2] = neg_one;
+
+		}
+		
+		if(prewitt_y_down_kernel == null){
+			prewitt_y_down_kernel = new Complex[3][3];
+			prewitt_y_down_kernel[0][0] = prewitt_y_down_kernel[0][1] = prewitt_y_down_kernel[0][2] = neg_one;
+			prewitt_y_down_kernel[1][0] = prewitt_y_down_kernel[1][1] = prewitt_y_down_kernel[1][2] = zero;
+			prewitt_y_down_kernel[2][0] = prewitt_y_down_kernel[2][1] = prewitt_y_down_kernel[2][2] = one;
+		}
+		if(prewitt_y_up_kernel == null){
+			prewitt_y_up_kernel = new Complex[3][3];
+			prewitt_y_up_kernel[0][0] = prewitt_y_up_kernel[0][1] = prewitt_y_up_kernel[0][2] = one;
+			prewitt_y_up_kernel[1][0] = prewitt_y_up_kernel[1][1] = prewitt_y_up_kernel[1][2] = zero;
+			prewitt_y_up_kernel[2][0] = prewitt_y_up_kernel[2][1] = prewitt_y_up_kernel[2][2] = neg_one;
+		}
+	}
+	
+	/**
+	 * -1 0 1\n
+	 * -1 0 1\n
+	 * -1 0 1\n
+	 * @return
+	 */
+	public Complex[][] x_right_kernel()	{	return prewitt_x_right_kernel;		}
+	
+	/**
+	 * 1 0 -1\n
+	 * 1 0 -1\n
+	 * 1 0 -1\n
+	 * @return
+	 */
+	public Complex[][] x_left_kernel()	{	return prewitt_x_left_kernel; 	}
+	
+	/**
+	 *  1  1  1\n
+	 *  0  0  0\n
+	 * -1 -1 -1\n
+	 * @return
+	 */
+	public Complex[][] y_up_kernel()	{	return prewitt_y_up_kernel;	}
+	
+	/**
+	 * -1 -1 -1\n
+	 *  0  0  0\n
+	 *  1  1  1\n
+	 * @return
+	 */
+	public Complex[][] y_down_kernel()	{	return prewitt_y_down_kernel; 	}
+	
+
 	
 	/* Old derivative methods */
 	/**
@@ -118,77 +192,4 @@ public class Prewitt implements CornerFilter{
 		}
 		return ret;
 	}
-	
-	/* Initialize Kernel */
-	//kernel
-	private static Complex[][] 
-			prewitt_x_left_kernel = null, 
-			prewitt_x_right_kernel = null,
-			prewitt_y_up_kernel = null, 
-			prewitt_y_down_kernel = null;
-	private static void init_prewitt_kernel(){
-		Complex neg_one = Complex.cartesian(-1, 0);
-		Complex zero = Complex.cartesian(0, 0);
-		Complex one = Complex.cartesian(1, 0);
-		if(prewitt_x_right_kernel == null){
-			prewitt_x_right_kernel = new Complex[3][3];
-			prewitt_x_right_kernel[0][0] = prewitt_x_right_kernel[1][0] = prewitt_x_right_kernel[2][0] = neg_one;
-			prewitt_x_right_kernel[0][1] = prewitt_x_right_kernel[1][1] = prewitt_x_right_kernel[2][1] = zero;
-			prewitt_x_right_kernel[0][2] = prewitt_x_right_kernel[1][2] = prewitt_x_right_kernel[2][2] = one;
-
-		}
-
-		if(prewitt_x_left_kernel == null){
-			prewitt_x_left_kernel = new Complex[3][3];
-			prewitt_x_left_kernel[0][0] = prewitt_x_left_kernel[1][0] = prewitt_x_left_kernel[2][0] = one;
-			prewitt_x_left_kernel[0][1] = prewitt_x_left_kernel[1][1] = prewitt_x_left_kernel[2][1] = zero;
-			prewitt_x_left_kernel[0][2] = prewitt_x_left_kernel[1][2] = prewitt_x_left_kernel[2][2] = neg_one;
-
-		}
-		
-		if(prewitt_y_down_kernel == null){
-			prewitt_y_down_kernel = new Complex[3][3];
-			prewitt_y_down_kernel[0][0] = prewitt_y_down_kernel[0][1] = prewitt_y_down_kernel[0][2] = neg_one;
-			prewitt_y_down_kernel[1][0] = prewitt_y_down_kernel[1][1] = prewitt_y_down_kernel[1][2] = zero;
-			prewitt_y_down_kernel[2][0] = prewitt_y_down_kernel[2][1] = prewitt_y_down_kernel[2][2] = one;
-		}
-		if(prewitt_y_up_kernel == null){
-			prewitt_y_up_kernel = new Complex[3][3];
-			prewitt_y_up_kernel[0][0] = prewitt_y_up_kernel[0][1] = prewitt_y_up_kernel[0][2] = one;
-			prewitt_y_up_kernel[1][0] = prewitt_y_up_kernel[1][1] = prewitt_y_up_kernel[1][2] = zero;
-			prewitt_y_up_kernel[2][0] = prewitt_y_up_kernel[2][1] = prewitt_y_up_kernel[2][2] = neg_one;
-		}
-	}
-	
-	/**
-	 * -1 0 1\n
-	 * -1 0 1\n
-	 * -1 0 1\n
-	 * @return
-	 */
-	public Complex[][] x_right_kernel()	{	return prewitt_x_right_kernel;		}
-	
-	/**
-	 * 1 0 -1\n
-	 * 1 0 -1\n
-	 * 1 0 -1\n
-	 * @return
-	 */
-	public Complex[][] x_left_kernel()	{	return prewitt_x_left_kernel; 	}
-	
-	/**
-	 *  1  1  1\n
-	 *  0  0  0\n
-	 * -1 -1 -1\n
-	 * @return
-	 */
-	public Complex[][] y_up_kernel()	{	return prewitt_y_up_kernel;	}
-	
-	/**
-	 * -1 -1 -1\n
-	 *  0  0  0\n
-	 *  1  1  1\n
-	 * @return
-	 */
-	public Complex[][] y_down_kernel()	{	return prewitt_y_down_kernel; 	}
 }

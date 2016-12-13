@@ -2,7 +2,7 @@ package abc2.imageprocess.corner.filter;
 
 import abc2.struct.Complex;
 
-public class RobertsCross {
+public class RobertsCross{
 	private static Object o = new Object();
 	private static RobertsCross singleton = null;
 	private RobertsCross(){

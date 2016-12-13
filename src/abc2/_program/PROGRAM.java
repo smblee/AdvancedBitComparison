@@ -1,115 +1,91 @@
 package abc2._program;
 
 import abc2.imageprocess.corner.Harris_Stephens;
+import abc2.imageprocess.corner.filter.CornerFilter;
+import abc2.imageprocess.corner.filter.ImageDerivative;
 import abc2.imageprocess.corner.filter.Prewitt;
+import abc2.imageprocess.corner.filter.Sobel;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 
+import abc2.query.tree.KDTree;
 import abc2.query.tree.QueryTree;
 import abc2.struct.Complex;
+import abc2.struct.Data;
+import abc2.struct.Data_a_b;
+import abc2.struct.Data_gof;
 import abc2.struct.SimpleData;
-import abc2.struct.DoubleLinkedMap;
+import abc2.struct.DLMap;
+import abc2.struct.SComparator;
+import abc2.util.MathTools;
 import abc2.util.Util;
 import abc2.util.fn;
 
 public class PROGRAM {
-	private static int C = 2;
+	private static int tools_count = 2;
 	
 	private static FileReader fr; 
 	private static BufferedReader br;
 
 	private static int row_l, col_l;
-	private static ArrayList<DoubleLinkedMap<Integer, SimpleData>> L1, L2, M1, M2, S1, S2;
-	private static QueryTree LTree, MTree, STree;
+	
+	/* for lookup */
+	private static DLMap<String, Integer> file_map;
+	//list of
+	// map
+	private static ArrayList<DLMap<Integer, SimpleData>> listof_data_map_folder1, listof_data_map_folder2;
+	/* for kdtree forest */
+	// list of 
+	// list of various tool generated Different data sets(lists).
+	private static ArrayList<ArrayList<ArrayList<Data>>> listof_data_lists_folder1, listof_data_lists_folder2;
+	private static ArrayList<ArrayList<KDTree>> Forest;
 
-	private static DoubleLinkedMap<String, Integer> file_map;
 
 	private static String folder1, folder2, outputfolder;
+	private static int query_size;
 	private static File f1, f2, outf;
 	private static String[] f1_list, f2_list;
 	private static double[] a_min, a_max, b_min, b_max, S_min, S_max;
+	
+	private static CornerFilter corner_filter = Sobel.instance(); 
 
 	public static void main(String[] args){
 		long start = System.currentTimeMillis();
-		char delim, c;
-		int index;
-		int query_size;
-
-		if(args.length < 4) {
-			printUsage();
-			System.exit(1);
-		}
+	
+		if(args.length < 4)
+			Util.pf("bad args count: %d; REQUIRED 4 \n", args.length);
 
 		folder1 = args[0];
 		folder2 = args[1];
 		outputfolder = args[2];
 		query_size = Integer.valueOf(args[3]);
-
-		f1 = new File(folder1);
-		f2 = new File(folder2);
-		outf = new File(outputfolder);
-
-		f1_list = f1.list((dir, name) -> !name.startsWith("."));
-		f2_list = f2.list((dir, name) -> !name.startsWith("."));
-
-		//Util.pl(folder1 + "/" + f1_list[0]);
-		//if(false){
-		/* figure out filesize */
-		row_l = col_l = 0;
-		fr = null; br = null;
-		try{
-			row_l = 1;
-			fr = new FileReader(folder1 + "/" + f1_list[0]);
-			fr.read();
-			while(fr.read() != '\n'){
-				fr.read();
-				++row_l;
-			}
-			col_l = 1;
-			br = new BufferedReader(fr);
-			while(br.readLine() != null){
-				++col_l;
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}finally{
-			try {
-				fr.close();
-				br.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		// col by row
-		Util.pl(col_l + " x " + row_l);
-
-		/* index the files */
-		file_map = new DoubleLinkedMap<String, Integer>();
-		index = 0;
-		for(String filename : f1_list)
-			file_map.put(filename, index++);
-		for(String filename : f2_list)
-			file_map.put(filename, index++);
-
+		
+		initStructures();
+		
+		indexImages();
+		
 		/* process the images and create tables */
-		init();
 
 		long s2 = System.currentTimeMillis();								//
 		Util.pl("preparation: " + (s2 - start) + " ms");					//
 
-		for(String filename : f1_list)
-			processImage(folder1 + "/" + filename, file_map.getValue(filename), false);
-		for(String filename : f2_list)
-			processImage(folder2 + "/" + filename, file_map.getValue(filename), true);
-
+		for(String filename : f1_list){
+			processImageKDTree(folder1 + "/" + filename, file_map.getValue(filename), false);
+		}
+		for(String filename : f2_list){
+			processImageKDTree(folder2 + "/" + filename, file_map.getValue(filename), true);
+		}
+		
 		long s3 = System.currentTimeMillis();								//
 		Util.pl("processImage: " + (s3 - s2) + " ms");						//
 		Util.pl("overall: " + (s3 - start) + " ms");						//
@@ -143,14 +119,102 @@ public class PROGRAM {
 		//			}
 		//		}
 
+
+		Util.pl("listof_data_map_folder1");
+		Util.pl(listof_data_map_folder1);
+		Util.pl("listof_data_map_folder2");
+		Util.pl(listof_data_map_folder2);
+		Util.pl("listof_data_lists_folder1");
+		Util.pl(listof_data_lists_folder1);
+		Util.pl(listof_data_lists_folder1.get(0).get(0).size());
+		Util.pl("listof_data_lists_folder2");
+		Util.pl(listof_data_lists_folder2);
+		Util.pl(listof_data_lists_folder2.get(0).get(0).size());
 		/* query tree */
+		
+		for(int i=0; i<tools_count; i++){
+			ArrayList<KDTree> forest_partition = Forest.get(i);
+			ArrayList<ArrayList<Data>> curr_data_list_list =  listof_data_lists_folder2.get(i);
+			
+			int tree_count = curr_data_list_list.size();
+			for(int j=0; j<tree_count; j++){
+				ArrayList<Data> input_to_tree = curr_data_list_list.get(j);
+				KDTree KDTREE = new KDTree(input_to_tree, input_to_tree.get(0).axis_num());
+				forest_partition.add(KDTREE);
+			}
+		}
+		
+		//TreeMap from overlap counts to img_index
+		for(String f1_imgname: f1_list){
+			int f1_img_index = file_map.getValue(f1_imgname);
+			
+
+			HashMap<SimpleData, Integer> table = new HashMap<SimpleData, Integer>();
+			for(int i=0; i<tools_count; i++){
+				DLMap<Integer, SimpleData> folder1_data_map = listof_data_map_folder1.get(i);
+				
+				Data query_data;
+				
+				//doesn't matter here
+				
+				
+				ArrayList<KDTree> forest_partition = Forest.get(i);
+				
+				Data[] ret;
+				for(int j=0; j<forest_partition.size(); j++){
+					KDTree tree = forest_partition.get(j);
+					
+					switch(j){
+						case 0:
+							query_data = new Data_a_b(folder1_data_map.getValue(f1_img_index));
+							break;
+						case 1:
+							query_data = new Data_gof(folder1_data_map.getValue(f1_img_index));
+							break;
+						default:
+							query_data = null;
+					}
+					
+					ret = tree.query(query_data, query_size);
+					
+					for(Data datum : ret){
+						SimpleData sd;
+						if(datum instanceof Data_a_b)
+							sd = ((Data_a_b) datum).sd;
+						else
+							sd = ((Data_gof) datum).sd;
+						if(table.containsKey(sd)){
+							table.put(sd, table.get(sd) + 1);
+						}else{
+							table.put(sd, 1);
+						}
+
+					}
+				}
+			}
+			
+			ArrayList<Map.Entry<SimpleData, Integer>> list = 
+					new ArrayList<Map.Entry<SimpleData, Integer>>(table.entrySet());
+			
+			list.sort((e1, e2) -> e1.getValue() - e2.getValue());
+			
+			Util.p(f1_imgname + " is similar to: ");
+			for(int i=0; i<query_size; i++){
+				Util.p(file_map.getKey(list.get(i)) + " ");
+			}
+			Util.p("\n");			
+		}
+		
+		
+		
+		/*
 		ArrayList<HashMap<String, ArrayList<String>>> ret = new ArrayList<HashMap<String, ArrayList<String>>>();
 		
-		for(int i=0; i<C; i++){
+		for(int i=0; i<tools_count; i++){
 			ret.add(new HashMap<String, ArrayList<String>>());
 		}
 		label1:
-		for(int i=0; i<C; i++){
+		for(int i=0; i<tools_count; i++){
 			double[] a_range = {a_min[i], a_max[i]};
 			double[] b_range = {b_min[i], b_max[i]};
 			double[] S_range = {S_min[i], S_max[i]};
@@ -208,21 +272,69 @@ public class PROGRAM {
 			}
 		}
 		//		LTree.query(d)
-	}
+		 */
+}
 
-	private static void printUsage() {
-		Util.pf("bad input. Need 4 arguments. Usage Ex. \"./my_program ./database ./query ./output 10\"  \n");
-	}
+	private static void indexImages(){
+		int index;
 
-	public static void processImage(String path, int index, boolean updateRange){
+		f1 = new File(folder1);
+		f2 = new File(folder2);
+		outf = new File(outputfolder);
+
+		f1_list = f1.list((dir, name) -> !name.startsWith("."));
+		f2_list = f2.list((dir, name) -> !name.startsWith("."));
+
+		//Util.pl(folder1 + "/" + f1_list[0]);
+		//if(false){
+		/* figure out filesize */
+		row_l = col_l = 0;
+		fr = null; br = null;
+		try{
+			row_l = 1;
+			fr = new FileReader(folder1 + "/" + f1_list[0]);
+			fr.read();
+			while(fr.read() != '\n'){
+				fr.read();
+				++row_l;
+			}
+			col_l = 1;
+			br = new BufferedReader(fr);
+			while(br.readLine() != null){
+				++col_l;
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			try {
+				fr.close();
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// col by row
+		Util.pl(col_l + " x " + row_l);
+
+		/* index the files */
+		file_map = new DLMap<String, Integer>();
+		index = 0;
+		for(String filename : f1_list)
+			file_map.put(filename, index++);
+		for(String filename : f2_list)
+			file_map.put(filename, index++);
+	}
+	
+	public static void processImageKDTree(String path, int img_index, boolean updateRange){
 		int[][] image;
 		image = Util.read(path, row_l, col_l);
 
 		//add to LMS;
-		extractStat(image, index, updateRange);
+		extractStat(image, img_index, updateRange);
 	}
 
-	private static void extractStat(int[][] img, int index, boolean updateRange){
+	private static void extractStat(int[][] img, int img_index, boolean updateRange){
 		double A, x0, y0, sigmaX, sigmaY;
 		int x, y;
 
@@ -253,17 +365,15 @@ public class PROGRAM {
 
 		SimpleData[] d = Harris_Stephens.forestImageR(
 				I, 
-				Prewitt.instance().x_right_kernel(), 
+				corner_filter.x_right_kernel(), 
 				fn.Gaussian(A, x0, y0, sigmaX, sigmaY), 
 				Complex.cartesian(0.0)
 				);
 		
+		DLMap<Integer, SimpleData> curr_data_map;
+		ArrayList<ArrayList<Data>> curr_data_list_list;
 		int d_len = d.length;
 		for(int i=0; i<d.length; i++){
-			if(d[i].containsNaN())
-				Util.pl(file_map.getKey(index));
-
-			//Util.pl(index + " : " + d);
 
 			if(updateRange){
 				a_min[i] = d[i].a < a_min[i] ? d[i].a : a_min[i];
@@ -272,37 +382,64 @@ public class PROGRAM {
 				b_max[i] = d[i].b > b_min[i] ? d[i].b : b_min[i];
 				S_min[i] = d[i].gof < S_min[i] ? d[i].gof : S_min[i];
 				S_max[i] = d[i].gof > S_min[i] ? d[i].gof : S_min[i];
-
-				L2.get(i).put(index, d[i]);
-			}else{
-				L1.get(i).put(index, d[i]);
 			}
+						
+			if(updateRange){
+				curr_data_map = listof_data_map_folder2.get(i);
+				curr_data_list_list = listof_data_lists_folder2.get(i);
+			}else{
+				curr_data_map = listof_data_map_folder1.get(i);
+				curr_data_list_list = listof_data_lists_folder1.get(i);
+			}
+
+			curr_data_map.put(img_index, d[i]); 
+			ArrayList<Data> 
+					data_a_b_list = curr_data_list_list.get(0),
+					data_gof_list = curr_data_list_list.get(1);
+			
+			data_a_b_list.add(new Data_a_b(d[i]));
+			data_gof_list.add(new Data_gof(d[i]));
 		}
 	}
 	
 	//
-	private static void init(){
-		L1 = new ArrayList<DoubleLinkedMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		M1 = new ArrayList<DoubleLinkedMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		S1 = new ArrayList<DoubleLinkedMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		L2 = new ArrayList<DoubleLinkedMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		M2 = new ArrayList<DoubleLinkedMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		S2 = new ArrayList<DoubleLinkedMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-	
-		for(int i=0; i<C; i++){
-			L1.add(new DoubleLinkedMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			M1.add(new DoubleLinkedMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			S1.add(new DoubleLinkedMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			L2.add(new DoubleLinkedMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			M2.add(new DoubleLinkedMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-			S2.add(new DoubleLinkedMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+	private static void initStructures(){
+		listof_data_map_folder1 = new ArrayList<DLMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		listof_data_map_folder2 = new ArrayList<DLMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		listof_data_lists_folder1 = new ArrayList<ArrayList<ArrayList<Data>>>();
+		listof_data_lists_folder2 = new ArrayList<ArrayList<ArrayList<Data>>>();
+		
+		Forest = new ArrayList<ArrayList<KDTree>>();
+		
+		for(int i=0; i<tools_count; i++){
+			listof_data_map_folder1.add(new DLMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+			listof_data_map_folder2.add(new DLMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+
+			ArrayList<ArrayList<Data>> data_list_list1 = new ArrayList<ArrayList<Data>>();
+			//for data_a_b;
+			 data_list_list1.add(new ArrayList<Data>());
+			//for data_gof;
+			 data_list_list1.add(new ArrayList<Data>());
+			ArrayList<ArrayList<Data>> data_list_list2 = new ArrayList<ArrayList<Data>>();
+			//for data_a_b;
+			 data_list_list2.add(new ArrayList<Data>());
+			//for data_gof;
+			 data_list_list2.add(new ArrayList<Data>());
+						
+			listof_data_lists_folder1.add(data_list_list1);
+			listof_data_lists_folder2.add(data_list_list2);
+			
+			Forest.add(new ArrayList<KDTree>());
+		
 		}
 
-		a_min = new double[C];
-		a_max = new double[C];
-		b_min = new double[C];
-		b_max = new double[C];
-		S_min = new double[C];
-		S_max = new double[C];
+		a_min = new double[tools_count];
+		a_max = new double[tools_count];
+		b_min = new double[tools_count];
+		b_max = new double[tools_count];
+		S_min = new double[tools_count];
+		S_max = new double[tools_count];
+		
+		
 	}
 }

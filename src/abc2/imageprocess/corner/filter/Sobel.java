@@ -2,7 +2,7 @@ package abc2.imageprocess.corner.filter;
 
 import abc2.struct.Complex;
 
-public class Sobel {
+public class Sobel implements CornerFilter{
 	private static Object o = new Object();
 	private static Sobel singleton = null;
 	private Sobel(){

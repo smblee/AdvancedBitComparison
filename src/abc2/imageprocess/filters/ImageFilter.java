@@ -5,6 +5,14 @@ import abc2.util.Matrix;
 import abc2.util.Util;
 
 public interface ImageFilter {	
+
+	public Complex[][] x_right_kernel();
+	public Complex[][] x_left_kernel();
+	public Complex[][] y_up_kernel();
+	public Complex[][] y_down_kernel();
+	
+	/* Deprecated methods */
+	/*
 	public Complex[][] dy_up(Complex[][] I);
 	public Complex[][] dy_down(Complex[][] I);
 	public Complex[][] dx_left(Complex[][] I);
@@ -14,6 +22,7 @@ public interface ImageFilter {
 	public Complex[][] dy(Complex[][] I);
 	
 	public Complex[][] d(Complex[][] I);
+	*/
 	
 	/**
 	 * mask an image I with masking kernel
