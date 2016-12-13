@@ -90,45 +90,7 @@ public class PROGRAM {
 		Util.pl("overall: " + (s3 - start) + " ms");						//
 		Util.pl("totalImages: " + (f1_list.length + f2_list.length));						//
 
-//		
-//		for(Map.Entry<Integer, Data> entry : L2.entrySet()){
-//			Integer i = entry.getKey();
-//			Data d = entry.getValue();
-//			System.out.println(file_map.getKey(i) + " : " + d);
-//		}
-//					
 
-		//		Data old = null; Integer _index = -1;
-		//		for(Map.Entry<Integer, Data> entry : L.entrySet()){
-		//			//for(Data d : L.values()){
-		//			Data d = entry.getValue();
-		//			Integer i = entry.getKey();
-		//			if(old == null){
-		//				old = d;
-		//				_index = i;
-		//			}
-		//			else{
-		//				if(old.equals(d)){
-		//					System.out.println(file_map.getKey(_index) + " = " + file_map.getKey(i));
-		//				}else{
-		//					System.out.println(file_map.getKey(_index) + " =/= " + file_map.getKey(i));
-		//					old = d;
-		//					_index = i;
-		//				}
-		//			}
-		//		}
-
-//
-//		Util.pl("listof_data_map_folder1");
-//		Util.pl(listof_data_map_folder1);
-//		Util.pl("listof_data_map_folder2");
-//		Util.pl(listof_data_map_folder2);
-//		Util.pl("listof_data_lists_folder1");
-//		Util.pl(listof_data_lists_folder1);
-//		Util.pl(listof_data_lists_folder1.get(0).get(0).size());
-//		Util.pl("listof_data_lists_folder2");
-//		Util.pl(listof_data_lists_folder2);
-//		Util.pl(listof_data_lists_folder2.get(0).get(0).size());
 		/* query tree */
 		
 		for(int i=0; i<tools_count; i++){
@@ -187,8 +149,8 @@ public class PROGRAM {
 						DLMap<Integer, SimpleData> tool_i_data_map_folder2 = listof_data_map_folder2.get(i);
 						int index = tool_i_data_map_folder2.getKey(sd);
 								
-						if(table.containsKey(sd)){
-							table.put(index, table.get(sd) + 1);
+						if(table.containsKey(index)){
+							table.put(index, table.get(index) + 1);
 						}else{
 							table.put(index, 1);
 						}
@@ -241,7 +203,7 @@ public class PROGRAM {
 			ArrayList<Map.Entry<Integer, Integer>> list = 
 					new ArrayList<Map.Entry<Integer, Integer>>(table.entrySet());
 			
-			list.sort((e1, e2) -> e1.getValue() - e2.getValue());
+			list.sort((e1, e2) -> e2.getValue() - e1.getValue());
 			
 			Util.pl(list);
 			
