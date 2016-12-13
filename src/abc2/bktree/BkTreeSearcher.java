@@ -16,10 +16,7 @@
 
 package abc2.bktree;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 import static abc2.bktree.BkTree.Node;
 import static java.lang.Math.max;
@@ -42,7 +39,8 @@ public final class BkTreeSearcher<E> {
      * @param maxDistance non-negative maximum distance of matching elements from query
      * @return matching elements in no particular order
      */
-    public Set<Match<? extends E>> search(E query, int maxDistance) {
+    public Set<Match<? extends E>> search(E query, int maxDistance, int k) {
+        //TODO: detect if k is too big
         if (query == null) throw new NullPointerException();
         if (maxDistance < 0) throw new IllegalArgumentException("maxDistance must be non-negative");
 
@@ -53,29 +51,29 @@ public final class BkTreeSearcher<E> {
         Queue<Node<E>> queue = new ArrayDeque<>();
         queue.add(tree.getRoot());
 
-        while (!queue.isEmpty()) {
+        while (!queue.isEmpty() || matches.size() < k) {
+            if (queue.isEmpty()) {
+                queue.add(tree.getRoot());
+                maxDistance++;
+            }
             Node<E> node = queue.remove();
             E element = node.getElement();
 
             int distance = metric.distance(element, query);
-            if (distance < 0) {
-                throw new IllegalMetricException(
-                    format("negative distance (%d) defined between element `%s` and query `%s`",
-                        distance, element, query));
-            }
+            if (distance < 0)
+                throw new IllegalArgumentException("Negative distance found");
 
-            if (distance <= maxDistance) {
+            if (distance <= maxDistance)
                 matches.add(new Match<>(element, distance));
-            }
+
 
             int minSearchDistance = max(distance - maxDistance, 0);
             int maxSearchDistance = distance + maxDistance;
 
             for (int searchDistance = minSearchDistance; searchDistance <= maxSearchDistance; ++searchDistance) {
                 Node<E> childNode = node.getChildNode(searchDistance);
-                if (childNode != null) {
+                if (childNode != null)
                     queue.add(childNode);
-                }
             }
         }
 
@@ -92,7 +90,7 @@ public final class BkTreeSearcher<E> {
      *
      * @param <E> type of matching element
      */
-    public static final class Match<E> {
+    public static final class Match<E> implements Comparable {
 
         private final E match;
         private final int distance;
@@ -146,6 +144,12 @@ public final class BkTreeSearcher<E> {
             sb.append(", distance=").append(distance);
             sb.append('}');
             return sb.toString();
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            Match m = (Match) o;
+            return this.distance > m.distance ? 1 : this.distance == m.distance ? 0 : -1;
         }
     }
 }

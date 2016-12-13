@@ -15,22 +15,19 @@ import java.util.regex.*;
  */
 public class BKTreeTest {
     public static void main(String[] args) {
-        // The Hamming distance is a simple metric that counts the number
-// of positions on which the strings (of equal length) differ.
-        Metric<String> hammingDistance = new Metric<String>() {
-            public int distance(String x, String y) {
 
-                if (x.length() != y.length())
-                    throw new IllegalArgumentException();
+        Metric<String> hammingDistance = (x, y) -> {
 
-                int distance = 0;
+            if (x.length() != y.length())
+                throw new IllegalArgumentException();
 
-                for (int i = 0; i < x.length(); i++)
-                    if (x.charAt(i) != y.charAt(i))
-                        distance++;
+            int distance = 0;
 
-                return distance;
-            }
+            for (int i = 0; i < x.length(); i++)
+                if (x.charAt(i) != y.charAt(i))
+                    distance++;
+
+            return distance;
         };
 
         MutableBkTree<String> bkTree = new MutableBkTree<>(hammingDistance);
@@ -40,9 +37,12 @@ public class BKTreeTest {
 
         BkTreeSearcher<String> searcher = new BkTreeSearcher<>(bkTree);
 
-        Set<BkTreeSearcher.Match<? extends String>> matches = searcher.search("01110", 3);
+        Set<BkTreeSearcher.Match<? extends String>> matches = searcher.search("01110", 2, 6);
 
-        for (BkTreeSearcher.Match<? extends String> match : matches)
+        List<BkTreeSearcher.Match<? extends String>> lst = asSortedList(matches);
+
+
+        for (BkTreeSearcher.Match<? extends String> match : lst)
             System.out.println(String.format(
                     "%s (distance %d)",
                     match.getMatch(),
@@ -52,5 +52,14 @@ public class BKTreeTest {
 // Output:
 //   marmot (distance 2)
 //   carrot (distance 1)
+    }
+
+
+
+    public static
+    <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
+        List<T> list = new ArrayList<T>(c);
+        Collections.sort(list);
+        return list;
     }
 }

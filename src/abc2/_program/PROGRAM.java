@@ -62,8 +62,10 @@ public class PROGRAM {
 	public static void main(String[] args){
 		long start = System.currentTimeMillis();
 	
-		if(args.length < 4)
-			Util.pf("bad args count: %d; REQUIRED 4 \n", args.length);
+		if(args.length < 4) {
+			Util.pf("bad args count: %d; REQUIRED 4. Usage: ./program ./database ./query ./output 10 \n", args.length);
+			System.exit(1);
+		}
 
 		folder1 = args[0];
 		folder2 = args[1];

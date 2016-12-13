@@ -74,8 +74,7 @@ public final class MutableBkTree<E> implements BkTree<E> {
     private int distance(E x, E y) {
         int distance = metric.distance(x, y);
         if (distance < 0) {
-            throw new IllegalMetricException(
-                format("negative distance (%d) defined between elements `%s` and `%s`", distance, x, y));
+            throw new IllegalArgumentException();
         }
         return distance;
     }
