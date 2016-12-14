@@ -163,7 +163,6 @@ public class PI extends PROGRAM{
 		
 		List<BkTreeSearcher.Match<? extends Data_stupidholder>> intersection = new ArrayList<>(collst); // use the copy constructor
 		intersection.retainAll(rowlst);
-		Util.pl(intersection.size());
 
 		for (BkTreeSearcher.Match<? extends Data_stupidholder> match : intersection){
 			RECORD_count(match.getMatch().img_index);
