@@ -215,75 +215,9 @@ public class PROGRAM {
 			Util.p("\n");			
 		}
 		
-		
-		
-		/*
-		ArrayList<HashMap<String, ArrayList<String>>> ret = new ArrayList<HashMap<String, ArrayList<String>>>();
-		
-		for(int i=0; i<tools_count; i++){
-			ret.add(new HashMap<String, ArrayList<String>>());
-		}
-		label1:
-		for(int i=0; i<tools_count; i++){
-			double[] a_range = {a_min[i], a_max[i]};
-			double[] b_range = {b_min[i], b_max[i]};
-			double[] S_range = {S_min[i], S_max[i]};
-
-			LTree = new QueryTree(L2.get(i), a_range, b_range, S_range, f2_list.length, query_size);
-		
-			int stopit = 0;
-			for(String f1name : f1_list){
-				System.out.println(f1name);
-				
-				int f1index = file_map.getValue(f1name);
-				ArrayList<Integer> resultlist = LTree.query(L1.get(i).getValue(f1index));
-				ArrayList<String> result_filenames = new ArrayList<String>();
-				for(Integer queryindex : resultlist)
-					result_filenames.add(file_map.getKey(queryindex));
-				ret.get(i).put(f1name, result_filenames);
-				stopit++;
-				if (stopit == 20)
-					continue label1;
-			}
-		}
-		
-		TreeMap<Integer, String> s;
-		
-		
-		int stopit = 0;
-		label2:
-		for(String f1name : f1_list){
-			s = new TreeMap<Integer, String>();
-
-			Util.p("-----\n");
-			Util.pl(f1name);
-			for(String similar : ret.get(0).get(f1name)){
-				s.put(1, similar);
-			}
-
-			stopit++;
-			if (stopit == 20){
-				stopit = 0;
-			
-				for(String _f1name : f1_list){
-					Collection<String> collection = s.values();
-					for(String similar : ret.get(1).get(_f1name))
-						if(collection.contains(similar))
-							s.put(2, similar);
-						else
-							s.put(1, similar);
-					
-					stopit++;
-					if (stopit == 20){
-						Util.pl(s);
-						continue label2;
-					}
-				}
-			}
-		}
-		//		LTree.query(d)
-		 */
-}
+		long end = System.currentTimeMillis();
+		Util.pl("Total runtime: " + (end - start) + " ms.");
+	}
 
 	private static void indexImages(){
 		int index;
