@@ -8,7 +8,12 @@ import abc2.imageprocess.corner.filter.Prewitt;
 import abc2.imageprocess.corner.filter.Sobel;
 import abc2.imageprocess.filters.ImageFilter;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.*;
 import java.util.function.BiFunction;
 
@@ -72,7 +77,7 @@ public class PROGRAM {
 	}
 	
 	/* Main PROGRAM */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException{
 		long start = System.currentTimeMillis();
 	
 		if(args.length < 4) {
@@ -123,6 +128,7 @@ public class PROGRAM {
 			Util.pl("overall: " + (s3 - start) + " ms");										//
 			Util.pl("totalImages: " + (f1_list.length + f2_list.length));						//
 		}
+		
 
 		if(!outf.exists())
 			outf.createNewFile();
@@ -134,28 +140,35 @@ public class PROGRAM {
 			
 			RESULT_COUNT_TABLE.clear();
 			// index to count
+			long ss1 = System.nanoTime();
 			PI.query_KDTree(f1_img_index);
+			long ss2 = System.nanoTime();
 			PI.query_BKTree(f1_img_index);
+			long ss3 = System.nanoTime();
+			
+			if(SHOW_RUNTIMES)	Util.pl("KDTree : " + (ss2 - ss1) + " ns");
+			if(SHOW_RUNTIMES)	Util.pl("BKTree : " + (ss3 - ss2) + " ns");
 
 			ArrayList<Map.Entry<Integer, Integer>> list = 
 					new ArrayList<Map.Entry<Integer, Integer>>(RESULT_COUNT_TABLE.entrySet());
 			
 			list.sort((e1, e2) -> e2.getValue() - e1.getValue());
 			
-//			Util.pl(list);
-
-			fw.write(f1_imgname + " ");// + " is similar to: ");
+			//Util.pl(list);
+			
+			fw.write(f1_imgname + " is similar to: ");
 			//query_size
 			for(int i=0; i<query_size; i++){
-				//fw.write(" " + list.get(i).getKey() + " = ");
+				//Util.p(" " + list.get(i).getKey() + " = ");
 				fw.write(file_map.getKey(list.get(i).getKey()) + " ");
 			}
-			fw.write("\n");
+			fw.write("\n");	
 		}
 		
 		long end = System.currentTimeMillis();														//
 		if(SHOW_RUNTIMES)																			//
 			Util.pl("Total runtime: " + (end - start) + " ms.");									//
+
 		fw.close();
 	}
 
@@ -197,7 +210,7 @@ public class PROGRAM {
 		}
 
 		// col by row
-//		Util.pl(col_l + " x " + row_l);
+		//Util.pl(col_l + " x " + row_l);
 
 		/* index the files */
 		file_map = new DLMap<String, Integer>();

@@ -155,8 +155,8 @@ public class PI extends PROGRAM{
 		//TODO: verify row and col
 		//System.out.println("Query col with "  + hash_data.col);
 		//System.out.println("Query row with " + hash_data.row);
-		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> colmatches = colsearcher.search(new Data_stupidholder(f1_img_index, hash_data.col), 28, (int) Math.sqrt(col_l));
-		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> rowmatches = rowsearcher.search(new Data_stupidholder(f1_img_index, hash_data.row), 28, (int) Math.sqrt(row_l));
+		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> colmatches = colsearcher.search(new Data_stupidholder(f1_img_index, hash_data.col), 2, (int) Math.sqrt(col_l));
+		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> rowmatches = rowsearcher.search(new Data_stupidholder(f1_img_index, hash_data.row), 2, (int) Math.sqrt(row_l));
 
 		List<BkTreeSearcher.Match<? extends Data_stupidholder>> collst = asSortedList(colmatches);
 		List<BkTreeSearcher.Match<? extends Data_stupidholder>> rowlst = asSortedList(rowmatches);
