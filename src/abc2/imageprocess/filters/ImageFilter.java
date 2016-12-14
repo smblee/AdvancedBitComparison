@@ -11,6 +11,9 @@ public interface ImageFilter {
 	public Complex[][] y_up_kernel();
 	public Complex[][] y_down_kernel();
 	
+	public int[][] x_kernel();
+	public int[][] y_kernel();
+	
 	/* Deprecated methods */
 	/*
 	public Complex[][] dy_up(Complex[][] I);
@@ -151,6 +154,21 @@ public interface ImageFilter {
 //		
 //		if(!sum.equals(Complex.cartesian(0)))
 //			Util.pl(sum);
+		return sum;
+	}
+	
+	public static double patch_mask(int[][] kernel, int[][] img, int v, int u){
+		int x, y;
+		double sum;
+	
+		x = kernel[0].length; y = kernel.length;
+	
+		sum = 0.0;
+		for(int a=0; a<y; a++){
+			for(int b=0; b<x; b++){
+				sum += img[v + a - 1][u + b - 1] * kernel[a][b];
+			}
+		}
 		return sum;
 	}
 }

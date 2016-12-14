@@ -219,6 +219,28 @@ public class Harris_Stephens{
 		return ret;
 	}
 	
+
+	public static double[][] structure_tensor(
+			double Ix_v_u, 
+			double Iy_v_u, 
+			int v, 
+			int u, 
+			BiFunction<Integer, Integer, Double> w){
+		double[][] ret;
+		double window;
+		
+		ret = new double[2][2];
+		
+		window = w.apply(u, v);
+		ret[0][0] = Ix_v_u * Ix_v_u * window;
+		ret[0][1] = Ix_v_u * Iy_v_u * window;
+		ret[1][0] = Ix_v_u * Iy_v_u * window;
+		ret[1][1] = Iy_v_u * Iy_v_u * window;
+				
+		return ret;
+	}
+	
+	
 	/**
 	 * R is positive in the corner region, negative in the edge regions,
 	 * 	 and small in Hit flat region.
@@ -234,6 +256,14 @@ public class Harris_Stephens{
 		return determinant.sub(k.mult(trace.mult(trace)));
 	}
 	
+	public static double R(double[][] structure_tensor, double k){
+		double trace, determinant;
+		trace = structure_tensor[0][0] + structure_tensor[1][1];
+		determinant = 	structure_tensor[0][0] * structure_tensor[1][1] - 
+						structure_tensor[0][1] * structure_tensor[1][0];
+		
+		return determinant - (k * trace * trace);
+	}
 	/*
 	public static Complex[][] structure_tensor(Complex[][] Ix, Complex[][] Iy,  BiFunction<Integer, Integer, Double> w){
 		int u, v;

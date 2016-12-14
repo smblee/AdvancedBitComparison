@@ -1,4 +1,4 @@
-package abc2._program;
+package abc2.test;
 
 import abc2.bktree.BkTreeSearcher;
 import abc2.bktree.HammingDistanceMetric;

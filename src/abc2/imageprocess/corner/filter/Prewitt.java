@@ -192,4 +192,36 @@ public class Prewitt implements CornerFilter{
 		}
 		return ret;
 	}
+
+	@Override
+	/**
+	 * 1 0 -1\n
+	 * 1 0 -1\n
+	 * 1 0 -1\n
+	 * @return
+	 */
+	public int[][] x_kernel() {
+		int[][] ret = {
+				{1, 0, -1},
+				{1, 0, -1},
+				{1, 0, -1}
+		};
+		return ret;
+	}
+
+	@Override
+	/**
+	 * -1 -1 -1\n
+	 *  0  0  0\n
+	 *  1  1  1\n
+	 * @return
+	 */
+	public int[][] y_kernel() {
+		int[][] ret = {
+				{-1, -1, -1},
+				{0, 0, 0},
+				{1, 1, 1}				
+		};
+		return ret;
+	}
 }

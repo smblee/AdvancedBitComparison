@@ -98,4 +98,36 @@ public class Sobel implements CornerFilter{
 	 * @return
 	 */
 	public Complex[][] y_down_kernel()	{	return sobel_y_down_kernel; 	}
+
+	@Override
+	/**
+	 * 1 0 -1\n
+	 * 2 0 -2\n
+	 * 1 0 -1\n
+	 * @return
+	 */
+	public int[][] x_kernel() {
+		int[][] ret = {
+				{1, 0, -1},
+				{2, 0, -2},
+				{1, 0, -1}
+			};
+		return ret;
+	}
+
+	@Override
+	/**
+	 * -1 -2 -1\n
+	 *  0  0  0\n
+	 *  1  2  1\n
+	 * @return
+	 */
+	public int[][] y_kernel() {
+		int[][] ret = {
+				{-1, -2, -1},
+				{0, 0, 0},
+				{1, 2, 1}
+			};
+		return ret;
+	}
 }

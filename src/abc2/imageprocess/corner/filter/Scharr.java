@@ -98,4 +98,36 @@ public class Scharr implements CornerFilter{
 	 * @return
 	 */
 	public Complex[][] y_down_kernel()	{	return sobel_y_down_kernel; 	}
+
+	@Override
+	/**
+	 * 3  0 -3\n
+	 * 10 0 -10\n
+	 * 3  0 -3\n
+	 * @return
+	 */
+	public int[][] x_kernel() {
+		int[][] ret = {
+				{3, 0, -3},
+				{10, 0, -10},
+				{3, 0, -3}
+		};
+		return null;
+	}
+
+	@Override
+	/**
+	 * -3 -10 -3\n
+	 *  0  0  0\n
+	 *  3  10  3\n
+	 * @return
+	 */
+	public int[][] y_kernel() {
+		int[][] ret = {
+				{-3, -10, -3},
+				{0, 0, 0},
+				{3, 10, 3}
+		};
+		return ret;
+	}
 }

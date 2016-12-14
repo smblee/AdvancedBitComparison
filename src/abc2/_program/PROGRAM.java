@@ -6,6 +6,7 @@ import abc2.imageprocess.corner.filter.CornerFilter;
 import abc2.imageprocess.corner.filter.ImageDerivative;
 import abc2.imageprocess.corner.filter.Prewitt;
 import abc2.imageprocess.corner.filter.Sobel;
+import abc2.imageprocess.filters.ImageFilter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +14,7 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BiFunction;
 
 import abc2.query.tree.KDTree;
 import abc2.query.tree.QueryTree;
@@ -20,42 +22,59 @@ import abc2.struct.*;
 import abc2.util.MathTools;
 import abc2.util.Util;
 import abc2.util.fn;
-
-import static abc2._program.BKTreeTest.asSortedList;
+import static abc2.test.BKTreeTest.asSortedList;
 
 public class PROGRAM {
-	private static int tools_count = 2;
+	private static boolean SHOW_RUNTIMES = true;
 	
 	private static FileReader fr; 
 	private static BufferedReader br;
 
-	private static int row_l, col_l;
-	
-	/* for lookup */
-	private static DLMap<String, Integer> file_map;
-	//list of
-	// map
-	private static ArrayList<DLMap<Integer, SimpleData>> listof_data_map_folder1, listof_data_map_folder2;
-	/* for kdtree forest */
-	// list of 
-	// list of various tool generated Different data sets(lists).
-	private static ArrayList<ArrayList<ArrayList<Data>>> listof_data_lists_folder1, listof_data_lists_folder2;
-	private static ArrayList<ArrayList<KDTree>> Forest;
-
-	private static MutableBkTree bktree_col;
-	private static MutableBkTree bktree_row;
-	private static Map<Integer, Data_stupidhash> stupidhashmap;
-
-
-
 	private static String folder1, folder2, outputfolder;
-	private static int query_size;
+	protected static int query_size;
 	private static File f1, f2, outf;
 	private static String[] f1_list, f2_list;
-	private static double[] a_min, a_max, b_min, b_max, S_min, S_max;
-	
-	private static CornerFilter corner_filter = Sobel.instance(); 
 
+	protected static int row_l, col_l;
+	
+	/* for lookup */
+	protected static DLMap<String, Integer> file_map;
+	
+	/* BKTree vars */
+	protected static MutableBkTree bktree_col_folder2;
+	protected static MutableBkTree bktree_row_folder2;
+	protected static Map<Integer, Data_stupidhash> bktree_hashmap_folder1;
+	
+	/* KDTree vars */
+		protected static int tools_count = 2;
+		//list of
+		// map
+		protected static ArrayList<DLMap<Integer, SimpleData>> listof_data_map_folder1;
+
+		protected static ArrayList<DLMap<Integer, SimpleData>> listof_data_map_folder2;
+		// for kdtree forest 
+		// list of 
+		// list of various tool generated Different data sets(lists).
+		protected static ArrayList<ArrayList<ArrayList<Data>>> listof_data_lists_folder1, listof_data_lists_folder2;
+		protected static ArrayList<ArrayList<KDTree>> Forest;
+		
+		protected static CornerFilter CORNER_FILTER = Sobel.instance(); 
+		
+		protected static double CORNER_FILTER_K = 0.07;
+
+
+	/* OVERALL COUNTS */
+	private static HashMap<Integer, Integer> RESULT_COUNT_TABLE= new HashMap<Integer, Integer>();
+	protected static void RECORD_count(Integer index){
+		if(RESULT_COUNT_TABLE.containsKey(index)){
+			RESULT_COUNT_TABLE.put(index, RESULT_COUNT_TABLE.get(index) + 1);
+		}else{
+			RESULT_COUNT_TABLE.put(index, 1);
+		}
+//		Util.pl(index + " count: " + RESULT_COUNT_TABLE.get(index));
+	}
+	
+	/* Main PROGRAM */
 	public static void main(String[] args){
 		long start = System.currentTimeMillis();
 	
@@ -75,24 +94,20 @@ public class PROGRAM {
 		
 		/* process the images and create tables */
 
-		long s2 = System.currentTimeMillis();								//
-		Util.pl("preparation: " + (s2 - start) + " ms");					//
+		long s2 = System.currentTimeMillis();													//
+		if(SHOW_RUNTIMES)																		//
+			Util.pl("preparation: " + (s2 - start) + " ms");									//
 
 		for(String filename : f1_list){
-			processImage(folder1 + "/" + filename, file_map.getValue(filename), false);
+			PI.processImage(folder1 + "/" + filename, file_map.getValue(filename), false);
 		}
 		for(String filename : f2_list){
-			processImage(folder2 + "/" + filename, file_map.getValue(filename), true);
+			PI.processImage(folder2 + "/" + filename, file_map.getValue(filename), true);
 		}
-		
-		long s3 = System.currentTimeMillis();								//
-		Util.pl("processImage: " + (s3 - s2) + " ms");						//
-		Util.pl("overall: " + (s3 - start) + " ms");						//
-		Util.pl("totalImages: " + (f1_list.length + f2_list.length));						//
 
 
-		/* query tree */
-		
+
+		/* KDTree query */
 		for(int i=0; i<tools_count; i++){
 			ArrayList<KDTree> forest_partition = Forest.get(i);
 			ArrayList<ArrayList<Data>> curr_data_list_list =  listof_data_lists_folder2.get(i);
@@ -105,109 +120,31 @@ public class PROGRAM {
 			}
 		}
 		
+		long s3 = System.currentTimeMillis();													//
+		if(SHOW_RUNTIMES){																		//
+			Util.pl("processImage: " + (s3 - s2) + " ms");										//
+			Util.pl("overall: " + (s3 - start) + " ms");										//
+			Util.pl("totalImages: " + (f1_list.length + f2_list.length));						//
+		}
+		
 		//TreeMap from overlap counts to img_index
 		for(String f1_imgname: f1_list){
 			int f1_img_index = file_map.getValue(f1_imgname);
 			
-
+			RESULT_COUNT_TABLE.clear();
 			// index to count
-			HashMap<Integer, Integer> table = new HashMap<Integer, Integer>();
-			for(int i=0; i<tools_count; i++){
-				DLMap<Integer, SimpleData> folder1_data_map = listof_data_map_folder1.get(i);
-				
-				Data query_data;
-				
-				//doesn't matter here
-				
-				
-				ArrayList<KDTree> forest_partition = Forest.get(i);
-				
-				Data[] ret;
-				for(int j=0; j<forest_partition.size(); j++){
-					KDTree tree = forest_partition.get(j);
-					
-					switch(j){
-						case 0:
-							query_data = new Data_a_b(folder1_data_map.getValue(f1_img_index));
-							break;
-						case 1:
-							query_data = new Data_gof(folder1_data_map.getValue(f1_img_index));
-							break;
-						default:
-							query_data = null;
-					}
-					
-					ret = tree.query(query_data, query_size);
-					
-					for(Data datum : ret){
-						SimpleData sd;
-						if(datum instanceof Data_a_b)
-							sd = ((Data_a_b) datum).sd;
-						else
-							sd = ((Data_gof) datum).sd;
-
-						DLMap<Integer, SimpleData> tool_i_data_map_folder2 = listof_data_map_folder2.get(i);
-						int index = tool_i_data_map_folder2.getKey(sd);
-								
-						if(table.containsKey(index)){
-							table.put(index, table.get(index) + 1);
-						}else{
-							table.put(index, 1);
-						}
-
-					}
-				}
-			}
-
-			System.out.println("********* STUPID HASH ********");
-			Data_stupidhash hash_data =  stupidhashmap.get(f1_img_index);
-			BkTreeSearcher<Data_stupidholder> colsearcher = new BkTreeSearcher<>(bktree_col);
-			BkTreeSearcher<Data_stupidholder> rowsearcher = new BkTreeSearcher<>(bktree_row);
-
-			System.out.println("Stupid hashing with image file " + f1_imgname);
-			//TODO: verify row and col
-			System.out.println("Query col with "  + hash_data.col);
-			System.out.println("Query row with " + hash_data.row);
-			Set<BkTreeSearcher.Match<? extends Data_stupidholder>> colmatches = colsearcher.search(new Data_stupidholder(f1_img_index, hash_data.col), (int) 2,(int) Math.sqrt(col_l));
-			Set<BkTreeSearcher.Match<? extends Data_stupidholder>> rowmatches = rowsearcher.search(new Data_stupidholder(f1_img_index, hash_data.row), (int) 2,(int) Math.sqrt(row_l));
-
-			List<BkTreeSearcher.Match<? extends Data_stupidholder>> collst = asSortedList(colmatches);
-			List<BkTreeSearcher.Match<? extends Data_stupidholder>> rowlst = asSortedList(rowmatches);
-
-			List<BkTreeSearcher.Match<? extends Data_stupidholder>> intersection = new ArrayList<>(collst); // use the copy constructor
-			intersection.retainAll(rowlst);
-
-						System.out.println("RESULT: Intersection of row and col");
-			for (BkTreeSearcher.Match<? extends Data_stupidholder> match : intersection)
-				System.out.println(String.format(
-						"%s (distance %d)",
-						file_map.back().get(match.getMatch().img_index),
-						match.getDistance()
-				));
-
-//			System.out.println("Col list");
-//			for (BkTreeSearcher.Match<? extends Data_stupidholder> match : collst)
-//				System.out.println(String.format(
-//						"%s (distance %d)",
-//						file_map.back().get(match.getMatch().img_index),
-//						match.getDistance()
-//				));
-//			System.out.println("Row list");
-//			for (BkTreeSearcher.Match<? extends Data_stupidholder> match : rowlst)
-//				System.out.println(String.format(
-//						"%s (distance %d)",
-//						file_map.back().get(match.getMatch().img_index),
-//						match.getDistance()
-//				));
+			PI.query_KDTree(f1_img_index);
+			PI.query_BKTree(f1_img_index);
 
 			ArrayList<Map.Entry<Integer, Integer>> list = 
-					new ArrayList<Map.Entry<Integer, Integer>>(table.entrySet());
+					new ArrayList<Map.Entry<Integer, Integer>>(RESULT_COUNT_TABLE.entrySet());
 			
 			list.sort((e1, e2) -> e2.getValue() - e1.getValue());
 			
 			Util.pl(list);
 			
 			Util.p(f1_imgname + " is similar to: ");
+			//query_size
 			for(int i=0; i<query_size; i++){
 				//Util.p(" " + list.get(i).getKey() + " = ");
 				Util.p(file_map.getKey(list.get(i).getKey()) + " ");
@@ -215,8 +152,9 @@ public class PROGRAM {
 			Util.p("\n");			
 		}
 		
-		long end = System.currentTimeMillis();
-		Util.pl("Total runtime: " + (end - start) + " ms.");
+		long end = System.currentTimeMillis();														//
+		if(SHOW_RUNTIMES)																			//
+			Util.pl("Total runtime: " + (end - start) + " ms.");									//
 	}
 
 	private static void indexImages(){
@@ -229,8 +167,6 @@ public class PROGRAM {
 		f1_list = f1.list((dir, name) -> !name.startsWith("."));
 		f2_list = f2.list((dir, name) -> !name.startsWith("."));
 
-		//Util.pl(folder1 + "/" + f1_list[0]);
-		//if(false){
 		/* figure out filesize */
 		row_l = col_l = 0;
 		fr = null; br = null;
@@ -270,126 +206,9 @@ public class PROGRAM {
 			file_map.put(filename, index++);
 	}
 	
-	/**
-	 * process image tool by tool
-	 * @param path
-	 * @param img_index
-	 * @param updateRange
-	 */
-	public static void processImage(String path, int img_index, boolean updateRange){
-		int[][] image;
-		image = Util.read(path, row_l, col_l);
-		processImageKDTree(image, img_index, updateRange);
-		processHistogram(image, img_index, image.length, image[0].length);
-	}
-	
-	public static void processImageKDTree(int[][] img, int img_index, boolean updateRange){
-
-
-		//add to LMS;
-		extractStat(img, img_index, updateRange);
-	}
-
-	private static void processHistogram(int[][] img, int img_index, int width, int height) {
-		Histogram hist = new Histogram(width, height);
-		hist.setThreshold((int) (img.length * 0.25));
-
-		/* process image */
-		for(int v=0; v<width; v++) {
-			for (int u = 0; u < height; u++) {
-				/* histogram */
-//				if (img[v][u] == 0) {
-//					hist.decrementCol(u);
-//					hist.decrementRow(v);
-				if (img[v][u] > 0) {
-					hist.incrementCol(u);
-					hist.incrementRow(v);
-				}
-			}
-		}
-		bktree_col.add(new Data_stupidholder(img_index, hist.colStupidHash()));
-		bktree_row.add(new Data_stupidholder(img_index, hist.rowStupidHash()));
-		stupidhashmap.put(img_index, new Data_stupidhash(hist.colStupidHash(), hist.rowStupidHash()));
-	}
-
-	private static void extractStat(int[][] img, int img_index, boolean updateRange){
-		double A, x0, y0, sigmaX, sigmaY;
-		int x, y;
-
-		x = img.length;
-		y = img[0].length;
-		Complex[][] I = new Complex[x][y];
-		for(int i=0; i<x; i++)
-			for(int j=0; j<y; j++)
-				I[i][j] = Complex.cartesian(img[i][j]);
-
-		//Util.pf("I.length = %d; I[0].length = %d.\n", I.length, I[0].length);
-
-		/*
-		 Data d = Harris_Stephens.processImageEigen(
-				I, 
-				Prewitt.instance().x_right_kernel(), 
-				ImageDerivative.Gaussian(A, x0, y0, sigmaX, sigmaY, x, y), 
-				Complex.cartesian(0)
-				);
-		 */
-		//Util.pl(file_map.getKey(index));
-
-		A = 1.0;
-		x0 = 0;
-		y0 = 0;
-		sigmaX = x;
-		sigmaY = y;
-
-		SimpleData[] d = Harris_Stephens.forestImageR(
-				I, 
-				corner_filter.x_right_kernel(), 
-				fn.Gaussian(A, x0, y0, sigmaX, sigmaY), 
-				Complex.cartesian(0.0)
-				);
-		
-		DLMap<Integer, SimpleData> curr_data_map;
-		ArrayList<ArrayList<Data>> curr_data_list_list;
-		int d_len = d.length;
-		for(int i=0; i<d.length; i++){
-
-			if(updateRange){
-				a_min[i] = d[i].a < a_min[i] ? d[i].a : a_min[i];
-				a_max[i] = d[i].a > a_min[i] ? d[i].a : a_min[i];
-				b_min[i] = d[i].b < b_min[i] ? d[i].b : b_min[i];
-				b_max[i] = d[i].b > b_min[i] ? d[i].b : b_min[i];
-				S_min[i] = d[i].gof < S_min[i] ? d[i].gof : S_min[i];
-				S_max[i] = d[i].gof > S_min[i] ? d[i].gof : S_min[i];
-			}
-						
-			if(updateRange){
-				curr_data_map = listof_data_map_folder2.get(i);
-				curr_data_list_list = listof_data_lists_folder2.get(i);
-			}else{
-				curr_data_map = listof_data_map_folder1.get(i);
-				curr_data_list_list = listof_data_lists_folder1.get(i);
-			}
-
-			curr_data_map.put(img_index, d[i]); 
-			ArrayList<Data> 
-					data_a_b_list = curr_data_list_list.get(0),
-					data_gof_list = curr_data_list_list.get(1);
-			
-			data_a_b_list.add(new Data_a_b(d[i]));
-			data_gof_list.add(new Data_gof(d[i]));
-		}
-	}
-	
 	//
 	private static void initStructures(){
-		listof_data_map_folder1 = new ArrayList<DLMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		listof_data_map_folder2 = new ArrayList<DLMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
-		listof_data_lists_folder1 = new ArrayList<ArrayList<ArrayList<Data>>>();
-		listof_data_lists_folder2 = new ArrayList<ArrayList<ArrayList<Data>>>();
-		
-		Forest = new ArrayList<ArrayList<KDTree>>();
-
-
+		//BKTree init
 		Metric<Data_stupidholder> hammingDistance = (x, y) -> {
 			if (x.hash.length() != y.hash.length())
 				throw new IllegalArgumentException();
@@ -402,9 +221,17 @@ public class PROGRAM {
 
 			return distance;
 		};
-		bktree_col = new MutableBkTree<>(hammingDistance);
-		bktree_row = new MutableBkTree<>(hammingDistance);
-		stupidhashmap = new HashMap<>();
+		bktree_col_folder2 = new MutableBkTree<>(hammingDistance);
+		bktree_row_folder2 = new MutableBkTree<>(hammingDistance);
+		bktree_hashmap_folder1 = new HashMap<>();
+		
+		// KDTree init
+		listof_data_map_folder1 = new ArrayList<DLMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		listof_data_map_folder2 = new ArrayList<DLMap<Integer, SimpleData>>();//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
+		listof_data_lists_folder1 = new ArrayList<ArrayList<ArrayList<Data>>>();
+		listof_data_lists_folder2 = new ArrayList<ArrayList<ArrayList<Data>>>();
+		
+		Forest = new ArrayList<ArrayList<KDTree>>();
 
 		for(int i=0; i<tools_count; i++){
 			listof_data_map_folder1.add(new DLMap<Integer, SimpleData>());//new HashMap<Integer, Data>(), new TreeMap<Data, Integer>(new SComparator()));
@@ -425,17 +252,103 @@ public class PROGRAM {
 			listof_data_lists_folder2.add(data_list_list2);
 			
 			Forest.add(new ArrayList<KDTree>());
-		
 		}
-
-		a_min = new double[tools_count];
-		a_max = new double[tools_count];
-		b_min = new double[tools_count];
-		b_max = new double[tools_count];
-		S_min = new double[tools_count];
-		S_max = new double[tools_count];
-
-		
-		
 	}
+	
+//	
+//	
+//	/**
+//	 * process image tool by tool
+//	 * @param path
+//	 * @param img_index
+//	 * @param folder2
+//	 */
+//	public static void processImage(String path, int img_index, boolean folder2){
+//		/*	Read	*/
+//		int[][] image;
+//		image = Util.read(path, row_l, col_l);
+//		
+//		processHistogram(image, img_index, folder2);
+//		
+//		processImageKDTree(image, img_index, folder2);
+//	}
+//	
+//	public static void processImageKDTree(int[][] img, int img_index, boolean updateRange){
+//		//add to LMS;
+//		extractStat(img, img_index, updateRange);
+//	}
+//
+//	private static void processHistogram(int[][] img, int img_index, boolean folder2) {
+//		int 	width = img.length, 
+//				height = img[0].length;
+//		
+//		Histogram hist = new Histogram(width, height);
+//		hist.setThreshold((int) (img.length * 0.25));
+//
+//		/* process image */
+//		for(int v=0; v<width; v++) {
+//			for (int u = 0; u < height; u++) {
+//				/* histogram */
+//				if (img[v][u] > 0) {
+//					hist.incrementCol(u);
+//					hist.incrementRow(v);
+//				}
+//			}
+//		}
+//		if(folder2){
+//			bktree_col_folder2.add(new Data_stupidholder(img_index, hist.colStupidHash()));
+//			bktree_row_folder2.add(new Data_stupidholder(img_index, hist.rowStupidHash()));
+//		}else{
+//			bktree_hashmap_folder1.put(img_index, new Data_stupidhash(hist.colStupidHash(), hist.rowStupidHash()));
+//		}
+//	}
+//
+//	private static void extractStat(int[][] img, int img_index, boolean folder2){
+//		double A, x0, y0, sigmaX, sigmaY;
+//		int x, y;
+//
+//		x = img.length;
+//		y = img[0].length;
+//		Complex[][] I = new Complex[x][y];
+//		for(int i=0; i<x; i++)
+//			for(int j=0; j<y; j++)
+//				I[i][j] = Complex.cartesian(img[i][j]);
+//
+//		A = 1.0;
+//		x0 = 0;
+//		y0 = 0;
+//		sigmaX = x;
+//		sigmaY = y;
+//
+//		SimpleData[] d = Harris_Stephens.forestImageR(
+//				I, 
+//				corner_filter.x_right_kernel(), 
+//				fn.Gaussian(A, x0, y0, sigmaX, sigmaY), 
+//				Complex.cartesian(0.0)
+//				);
+//		
+//		DLMap<Integer, SimpleData> curr_data_map;
+//		ArrayList<ArrayList<Data>> curr_data_list_list;
+//		int d_len = d.length;
+//		for(int i=0; i<d.length; i++){
+//						
+//			if(folder2){
+//				curr_data_map = listof_data_map_folder2.get(i);
+//				curr_data_list_list = listof_data_lists_folder2.get(i);
+//			}else{
+//				curr_data_map = listof_data_map_folder1.get(i);
+//				curr_data_list_list = listof_data_lists_folder1.get(i);
+//			}
+//
+//			curr_data_map.put(img_index, d[i]); 
+//			ArrayList<Data> 
+//					data_a_b_list = curr_data_list_list.get(0),
+//					data_gof_list = curr_data_list_list.get(1);
+//			
+//			data_a_b_list.add(new Data_a_b(d[i]));
+//			data_gof_list.add(new Data_gof(d[i]));
+//		}
+//	}
+	
+	
 }
