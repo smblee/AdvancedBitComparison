@@ -20,11 +20,18 @@ public class Data_stupidholder {
 
 
     public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
         Data_stupidholder d = (Data_stupidholder) o;
         return this.img_index == d.img_index;
     }
 
     public int hashCode() {
-        return img_index;
+        return Integer.hashCode(img_index);
+    }
+
+    public String toString() {
+        return String.format("[" + img_index + "]: " + hash);
     }
 }

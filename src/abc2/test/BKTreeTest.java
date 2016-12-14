@@ -40,15 +40,15 @@ public class BKTreeTest {
 
         Set<BkTreeSearcher.Match<? extends String>> matches = searcher.search("01110", 2, 6);
 
-        List<BkTreeSearcher.Match<? extends String>> lst = asSortedList(matches);
-
-
-        for (BkTreeSearcher.Match<? extends String> match : lst)
-            System.out.println(String.format(
-                    "%s (distance %d)",
-                    match.getMatch(),
-                    match.getDistance()
-            ));
+//        List<BkTreeSearcher.Match<? extends String>> lst = asSortedList(matches);
+//
+//
+//        for (BkTreeSearcher.Match<? extends String> match : lst)
+//            System.out.println(String.format(
+//                    "%s (distance %d)",
+//                    match.getMatch(),
+//                    match.getDistance()
+//            ));
 
 // Output:
 //   marmot (distance 2)
@@ -58,9 +58,11 @@ public class BKTreeTest {
 
 
     public static
-    <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
-        List<T> list = new ArrayList<T>(c);
-        Collections.sort(list);
-        return list;
+    <T extends Comparable<? super T>> List<T> asSortedCombinedList(Collection<T> c1, Collection<T> c2) {
+        List<T> list1 = new ArrayList<T>(c1);
+        List<T> list2 = new ArrayList<T>(c2);
+        list1.retainAll(list2);
+        Collections.sort(list1);
+        return list1;
     }
 }

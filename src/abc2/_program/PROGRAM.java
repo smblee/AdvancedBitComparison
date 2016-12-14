@@ -16,6 +16,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 import abc2.query.tree.KDTree;
 import abc2.query.tree.QueryTree;
@@ -23,10 +24,10 @@ import abc2.struct.*;
 import abc2.util.MathTools;
 import abc2.util.Util;
 import abc2.util.fn;
-import static abc2.test.BKTreeTest.asSortedList;
+//import static abc2.test.BKTreeTest.asSortedList;
 
 public class PROGRAM {
-	private static boolean SHOW_RUNTIMES = true;
+	private static boolean SHOW_RUNTIMES = false;
 	
 	private static FileReader fr; 
 	private static BufferedReader br;
@@ -66,15 +67,24 @@ public class PROGRAM {
 
 
 	/* OVERALL COUNTS */
-	private static HashMap<Integer, Integer> RESULT_COUNT_TABLE= new HashMap<Integer, Integer>();
-	protected static void RECORD_count(Integer index){
-		if(RESULT_COUNT_TABLE.containsKey(index)){
-			RESULT_COUNT_TABLE.put(index, RESULT_COUNT_TABLE.get(index) + 1);
-		}else{
-			RESULT_COUNT_TABLE.put(index, 1);
-		}
+	private static HashMap<Integer, Double> RESULT_COUNT_TABLE= new HashMap<Integer, Double>();
+	protected static void RECORD_count_KD(Integer index){
+        if(RESULT_COUNT_TABLE.containsKey(index)){
+            RESULT_COUNT_TABLE.put(index, RESULT_COUNT_TABLE.get(index) + 10);
+        }else{
+            RESULT_COUNT_TABLE.put(index, 10.0);
+        }
 //		Util.pl(index + " count: " + RESULT_COUNT_TABLE.get(index));
-	}
+    }
+
+    protected static void RECORD_count_BK(Integer index, double weight){
+        if(RESULT_COUNT_TABLE.containsKey(index)){
+            RESULT_COUNT_TABLE.put(index, RESULT_COUNT_TABLE.get(index) + weight);
+        }else{
+            RESULT_COUNT_TABLE.put(index, weight);
+        }
+//		Util.pl(index + " count: " + RESULT_COUNT_TABLE.get(index));
+    }
 	
 	/* Main PROGRAM */
 	public static void main(String[] args) throws IOException{
@@ -141,7 +151,7 @@ public class PROGRAM {
 			RESULT_COUNT_TABLE.clear();
 			// index to count
 			long ss1 = System.nanoTime();
-			PI.query_KDTree(f1_img_index);
+//			PI.query_KDTree(f1_img_index);
 			long ss2 = System.nanoTime();
 			PI.query_BKTree(f1_img_index);
 			long ss3 = System.nanoTime();
@@ -149,17 +159,19 @@ public class PROGRAM {
 			if(SHOW_RUNTIMES)	Util.pl("KDTree : " + (ss2 - ss1) + " ns");
 			if(SHOW_RUNTIMES)	Util.pl("BKTree : " + (ss3 - ss2) + " ns");
 
-			ArrayList<Map.Entry<Integer, Integer>> list = 
-					new ArrayList<Map.Entry<Integer, Integer>>(RESULT_COUNT_TABLE.entrySet());
+			ArrayList<Map.Entry<Integer, Double>> list =
+					new ArrayList<Map.Entry<Integer, Double>>(RESULT_COUNT_TABLE.entrySet());
 			
-			list.sort((e1, e2) -> e2.getValue() - e1.getValue());
-			
-			//Util.pl(list);
-			
-			fw.write(f1_imgname + " is similar to: ");
+			list.sort((e1, e2) -> Double.compare(e1.getValue(), e2.getValue()));
+
+            System.out.println();
+
+            Util.pl(list);
+            Util.p(f1_imgname + " ");
+			fw.write(f1_imgname + " ");
 			//query_size
-			for(int i=0; i<query_size; i++){
-				//Util.p(" " + list.get(i).getKey() + " = ");
+			for(int i=0; i<query_size; i++) {
+				Util.p(list.get(i).getKey() + " ");
 				fw.write(file_map.getKey(list.get(i).getKey()) + " ");
 			}
 			fw.write("\n");	

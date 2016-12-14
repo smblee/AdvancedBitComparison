@@ -166,10 +166,10 @@ public final class MutableBkTree<E> implements BkTree<E> {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-
+//
             MutableNode that = (MutableNode) o;
-
-            if (!childrenByDistance.equals(that.childrenByDistance)) return false;
+//
+//            if (!childrenByDistance.equals(that.childrenByDistance)) return false;
             if (!element.equals(that.element)) return false;
 
             return true;
@@ -178,7 +178,7 @@ public final class MutableBkTree<E> implements BkTree<E> {
         @Override
         public int hashCode() {
             int result = element.hashCode();
-            result = 31 * result + childrenByDistance.hashCode();
+//            result = 31 * result + childrenByDistance.hashCode();
             return result;
         }
 

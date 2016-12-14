@@ -16,6 +16,8 @@
 
 package abc2.bktree;
 
+import abc2.struct.Data_stupidholder;
+
 import java.util.*;
 
 import static abc2.bktree.BkTree.Node;
@@ -80,6 +82,7 @@ public final class BkTreeSearcher<E> {
         return matches;
     }
 
+
     /** Returns the tree searched by this searcher. */
     public BkTree<E> getTree() {
         return tree;
@@ -124,7 +127,7 @@ public final class BkTreeSearcher<E> {
 
             Match that = (Match) o;
 
-            if (distance != that.distance) return false;
+//            if (distance != that.distance) return false;
             if (!match.equals(that.match)) return false;
 
             return true;

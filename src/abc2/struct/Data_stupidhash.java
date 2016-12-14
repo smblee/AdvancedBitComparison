@@ -12,10 +12,15 @@ import java.util.regex.*;
 public class Data_stupidhash {
     public String col;
     public String row;
-    public String filename;
+    public int img_index;
 
     public Data_stupidhash(String col, String row) {
         this.col = col;
         this.row = row;
+    }
+    public Data_stupidhash(String col, String row, int img_index) {
+        this.col = col;
+        this.row = row;
+        this.img_index = img_index;
     }
 }

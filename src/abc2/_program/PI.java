@@ -1,10 +1,8 @@
 package abc2._program;
 
-import static abc2.test.BKTreeTest.asSortedList;
+import static abc2.test.BKTreeTest.asSortedCombinedList;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 
 import abc2.bktree.BkTreeSearcher;
@@ -155,27 +153,38 @@ public class PI extends PROGRAM{
 		//TODO: verify row and col
 		//System.out.println("Query col with "  + hash_data.col);
 		//System.out.println("Query row with " + hash_data.row);
-		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> colmatches = colsearcher.search(new Data_stupidholder(f1_img_index, hash_data.col), 2, (int) Math.sqrt(col_l));
-		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> rowmatches = rowsearcher.search(new Data_stupidholder(f1_img_index, hash_data.row), 2, (int) Math.sqrt(row_l));
+		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> colmatches = colsearcher.search(new Data_stupidholder(f1_img_index, hash_data.col), col_l/6, (int) Math.sqrt(col_l));
+		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> rowmatches = rowsearcher.search(new Data_stupidholder(f1_img_index, hash_data.row), row_l/6, (int) Math.sqrt(row_l));
 
-		List<BkTreeSearcher.Match<? extends Data_stupidholder>> collst = asSortedList(colmatches);
-		List<BkTreeSearcher.Match<? extends Data_stupidholder>> rowlst = asSortedList(rowmatches);
-		
-		List<BkTreeSearcher.Match<? extends Data_stupidholder>> intersection = new ArrayList<>(collst); // use the copy constructor
-		intersection.retainAll(rowlst);
+		// image index to the match.
+		Map<Integer, BkTreeSearcher.Match<? extends Data_stupidholder>> collst = new HashMap<>();
+		for (BkTreeSearcher.Match<? extends Data_stupidholder> m : colmatches) {
+			collst.put(m.getMatch().img_index, m);
+		}
 
-		for (BkTreeSearcher.Match<? extends Data_stupidholder> match : intersection){
-			RECORD_count(match.getMatch().img_index);
-//			System.out.println(String.format(
-//					"%s (distance %d)",
-//					file_map.back().get(match.getMatch().img_index),
-//					match.getDistance()
-//			));
-		
+		List<BkTreeSearcher.Match<Integer>> intersection = new ArrayList<>(); //= new ArrayList<>(collst); // use the copy constructor
+		for (BkTreeSearcher.Match<? extends Data_stupidholder> row_img : rowmatches) {
+			if (collst.containsKey(row_img.getMatch().img_index)) {
+				intersection.add(new BkTreeSearcher.Match<Integer>(row_img.getMatch().img_index, row_img.getDistance() + collst.get(row_img.getMatch().img_index).getDistance()));
+			}
+		}
+		// sort the intersection of col row by combined distance.
+		intersection.sort((o1, o2) -> Integer.compare(o1.getDistance(), o2.getDistance()));
+
+		Util.p("\n../queries/" + file_map.back().get(f1_img_index) + " ");
+		int top = 0;
+		for (BkTreeSearcher.Match<Integer> match : intersection){
+			// print the top 10 results in the sorted list.
+			if (top++ < 10) {
+				Util.p(match.getMatch() + " ");
+
+//				Util.p(file_map.back().get(match.getMatch()) + " ");
+			}
+			RECORD_count_BK(match.getMatch(), match.getDistance());
 		}
 		
 	}// query_BKTree
-	
+
 	/* KDTree Query */
 	public static void query_KDTree(int f1_img_index){		
 		for(int i=0; i<tools_count; i++){
@@ -213,7 +222,7 @@ public class PI extends PROGRAM{
 					DLMap<Integer, SimpleData> tool_i_data_map_folder2 = listof_data_map_folder2.get(i);
 					int index = tool_i_data_map_folder2.getKey(sd);
 							
-					RECORD_count(index);
+					RECORD_count_KD(index);
 				}
 				
 			}
