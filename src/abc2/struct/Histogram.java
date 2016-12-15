@@ -72,31 +72,28 @@ public class Histogram {
         this.threshold = t;
     }
 //TODO: this is stupid. change it later.
-    public String colStupidHash() {
-        StringBuilder sb = new StringBuilder();
+    public int[] colStupidHash() {
+        int[] ret = new int[cols.length];
         for (int i =0; i < cols.length; i++) {
             int curr = cols[i];
-
             if (curr >= threshold) {
-                sb.append(1);
-            } else
-                sb.append(0);
+                ret[i] = 1;
+            }
         }
-        return sb.toString();
+        return ret;
+//        return cols;
 
     }
 
-    public String rowStupidHash() {
-        StringBuilder sb = new StringBuilder();
+    public int[] rowStupidHash() {
+        int[] ret = new int[rows.length];
         for (int i =0; i < rows.length; i++) {
             int curr = rows[i];
             if (curr >= threshold) {
-                sb.append(1);
-            } else
-                sb.append(0);
+                ret[i] = 1;
+            }
         }
-        return sb.toString();
-    }
+        return ret;    }
 
     public String toString() {
         return String.format("cols: %s \nrows: %s", Arrays.toString(cols), Arrays.toString(rows));

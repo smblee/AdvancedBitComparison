@@ -70,9 +70,9 @@ public class PROGRAM {
 	private static HashMap<Integer, Double> RESULT_COUNT_TABLE= new HashMap<Integer, Double>();
 	protected static void RECORD_count_KD(Integer index){
         if(RESULT_COUNT_TABLE.containsKey(index)){
-            RESULT_COUNT_TABLE.put(index, RESULT_COUNT_TABLE.get(index) + 10);
+            RESULT_COUNT_TABLE.put(index, RESULT_COUNT_TABLE.get(index) + row_l+col_l);
         }else{
-            RESULT_COUNT_TABLE.put(index, 10.0);
+            RESULT_COUNT_TABLE.put(index, (double) row_l+col_l);
         }
 //		Util.pl(index + " count: " + RESULT_COUNT_TABLE.get(index));
     }
@@ -164,14 +164,14 @@ public class PROGRAM {
 			
 			list.sort((e1, e2) -> Double.compare(e1.getValue(), e2.getValue()));
 
-            System.out.println();
-
-            Util.pl(list);
-            Util.p(f1_imgname + " ");
+//            System.out.println();
+//
+//            Util.pl(list);
+//            Util.p(f1_imgname + " ");
 			fw.write(f1_imgname + " ");
 			//query_size
 			for(int i=0; i<query_size; i++) {
-				Util.p(list.get(i).getKey() + " ");
+//				Util.p(list.get(i).getKey() + " ");
 				fw.write(file_map.getKey(list.get(i).getKey()) + " ");
 			}
 			fw.write("\n");	
@@ -237,15 +237,22 @@ public class PROGRAM {
 	private static void initStructures(){
 		//BKTree init
 		Metric<Data_stupidholder> hammingDistance = (x, y) -> {
-			if (x.hash.length() != y.hash.length())
+			if (x.hash.length != y.hash.length)
 				throw new IllegalArgumentException();
 
 			int distance = 0;
+			for (int i = 0; i < x.hash.length; i++) {
+				distance += x.hash[i] != y.hash[i] ? 1 : 0;
+//				distance+=Math.abs(x.hash[i] - y.hash[i]);
+            }
 
-			for (int i = 0; i < x.hash.length(); i++)
-				if (x.hash.charAt(i) != y.hash.charAt(i))
-					distance++;
-
+//			for (int i = 0; i < x.hash.length; i+=2) {
+//				//check odd case
+//				if (i == x.hash.length - 1)
+//					distance+=Math.abs(x.hash[i] - y.hash[i]);
+//				else
+//	                distance+=Math.abs(x.hash[i] + x.hash[i+1] - y.hash[i] - y.hash[i+1]);
+//            }
 			return distance;
 		};
 		bktree_col_folder2 = new MutableBkTree<>(hammingDistance);

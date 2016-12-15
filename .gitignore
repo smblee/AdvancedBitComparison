@@ -22,3 +22,5 @@ OutputImages/*
 shapes/*
 !shapes/.gitkeep
 /bin
+Test1/output/*
+Test2/output/*

@@ -53,7 +53,7 @@ public class PI extends PROGRAM{
 		
 		/* histogram prep */
 		Histogram hist = new Histogram(col_l, row_l);
-		hist.setThreshold((int) (img.length * 0.25));
+		hist.setThreshold((int) (img.length * 0.24));
 		
 		/* corner filter prep */
 		double	dx_v_u, dy_v_u;
@@ -153,8 +153,8 @@ public class PI extends PROGRAM{
 		//TODO: verify row and col
 		//System.out.println("Query col with "  + hash_data.col);
 		//System.out.println("Query row with " + hash_data.row);
-		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> colmatches = colsearcher.search(new Data_stupidholder(f1_img_index, hash_data.col), col_l/6, (int) Math.sqrt(col_l));
-		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> rowmatches = rowsearcher.search(new Data_stupidholder(f1_img_index, hash_data.row), row_l/6, (int) Math.sqrt(row_l));
+		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> colmatches = colsearcher.search(new Data_stupidholder(f1_img_index, hash_data.col), col_l, (int) col_l);
+		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> rowmatches = rowsearcher.search(new Data_stupidholder(f1_img_index, hash_data.row), row_l, (int) row_l);
 
 		// image index to the match.
 		Map<Integer, BkTreeSearcher.Match<? extends Data_stupidholder>> collst = new HashMap<>();
@@ -171,12 +171,12 @@ public class PI extends PROGRAM{
 		// sort the intersection of col row by combined distance.
 		intersection.sort((o1, o2) -> Integer.compare(o1.getDistance(), o2.getDistance()));
 
-		Util.p("\n../queries/" + file_map.back().get(f1_img_index) + " ");
+//		Util.p("\n../queries/" + file_map.back().get(f1_img_index) + " ");
 		int top = 0;
 		for (BkTreeSearcher.Match<Integer> match : intersection){
 			// print the top 10 results in the sorted list.
 			if (top++ < 10) {
-				Util.p(match.getMatch() + " ");
+//				Util.p(match.getMatch() + " | ");
 
 //				Util.p(file_map.back().get(match.getMatch()) + " ");
 			}

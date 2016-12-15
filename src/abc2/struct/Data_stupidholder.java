@@ -10,10 +10,10 @@ import java.util.regex.*;
  * Created by brylee on 12/13/16.
  */
 public class Data_stupidholder {
-    public String hash;
+    public int[] hash;
     public int img_index;
 
-    public Data_stupidholder(int index, String hash) {
+    public Data_stupidholder(int index, int[] hash) {
         this.hash = hash;
         this.img_index = index;
     }
