@@ -1,29 +1,19 @@
 package abc2._program;
 
 import abc2.bktree.*;
-import abc2.imageprocess.corner.Harris_Stephens;
 import abc2.imageprocess.corner.filter.CornerFilter;
-import abc2.imageprocess.corner.filter.ImageDerivative;
-import abc2.imageprocess.corner.filter.Prewitt;
 import abc2.imageprocess.corner.filter.Sobel;
-import abc2.imageprocess.filters.ImageFilter;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import abc2.query.tree.KDTree;
-import abc2.query.tree.QueryTree;
 import abc2.struct.*;
-import abc2.util.MathTools;
 import abc2.util.Util;
-import abc2.util.fn;
 //import static abc2.test.BKTreeTest.asSortedList;
 
 public class PROGRAM {
@@ -44,8 +34,8 @@ public class PROGRAM {
 	protected static DLMap<String, Integer> file_map;
 	
 	/* BKTree vars */
-	protected static MutableBkTree bktree_col_folder2;
-	protected static MutableBkTree bktree_row_folder2;
+	protected static HashBkTree bktree_col_folder2;
+	protected static HashBkTree bktree_row_folder2;
 	protected static Map<Integer, Data_stupidhash> bktree_hashmap_folder1;
 	
 	/* KDTree vars */
@@ -136,8 +126,8 @@ public class PROGRAM {
 		long s3 = System.currentTimeMillis();													//
 		if(SHOW_RUNTIMES){																		//
 			Util.pl("processImage: " + (s3 - s2) + " ms");										//
-			Util.pl("overall: " + (s3 - start) + " ms");										//
-			Util.pl("totalImages: " + (f1_list.length + f2_list.length));						//
+//			Util.pl("overall: " + (s3 - start) + " ms");										//
+//			Util.pl("totalImages: " + (f1_list.length + f2_list.length));						//
 		}
 		
 
@@ -151,14 +141,14 @@ public class PROGRAM {
 			
 			RESULT_COUNT_TABLE.clear();
 			// index to count
-			long ss1 = System.nanoTime();
+//			long ss1 = System.nanoTime();
 			PI.query_KDTree(f1_img_index);
-			long ss2 = System.nanoTime();
+//			long ss2 = System.nanoTime();
 			PI.query_BKTree(f1_img_index);
-			long ss3 = System.nanoTime();
+//			long ss3 = System.nanoTime();
 			
-			if(SHOW_RUNTIMES)	Util.pl("KDTree : " + (ss2 - ss1) + " ns");
-			if(SHOW_RUNTIMES)	Util.pl("BKTree : " + (ss3 - ss2) + " ns");
+//			if(SHOW_RUNTIMES)	Util.pl("KDTree : " + (ss2 - ss1) + " ns");
+//			if(SHOW_RUNTIMES)	Util.pl("BKTree : " + (ss3 - ss2) + " ns");
 
 			ArrayList<Map.Entry<Integer, Double>> list =
 					new ArrayList<Map.Entry<Integer, Double>>(RESULT_COUNT_TABLE.entrySet());
@@ -178,9 +168,11 @@ public class PROGRAM {
 			fw.write("\n");	
 		}
 		
-		long end = System.currentTimeMillis();														//
-		if(SHOW_RUNTIMES)																			//
-			Util.pl("Total runtime: " + (end - start) + " ms.");									//
+		long end = System.currentTimeMillis();
+		if(SHOW_RUNTIMES)																				//
+			Util.pl("query image time: " + (end-s3) + " ms");												//
+		if(SHOW_RUNTIMES)																				//
+			Util.pl("Total runtime: " + (end - start) + " ms");										//
 
 		fw.close();
 	}
@@ -256,8 +248,8 @@ public class PROGRAM {
 //            }
 			return distance;
 		};
-		bktree_col_folder2 = new MutableBkTree<>(hammingDistance);
-		bktree_row_folder2 = new MutableBkTree<>(hammingDistance);
+		bktree_col_folder2 = new HashBkTree<>(hammingDistance);
+		bktree_row_folder2 = new HashBkTree<>(hammingDistance);
 		bktree_hashmap_folder1 = new HashMap<>();
 		
 		// KDTree init

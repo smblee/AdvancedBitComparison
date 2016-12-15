@@ -1,15 +1,12 @@
 package abc2._program;
 
-import static abc2.test.BKTreeTest.asSortedCombinedList;
-
 import java.util.*;
 import java.util.function.BiFunction;
 
-import abc2.bktree.BkTreeSearcher;
-import abc2.imageprocess.corner.Harris_Stephens;
+import abc2.bktree.BkTreeSearchApp;
+import abc2.imageprocess.corner.filter.CornerFilter;
 import abc2.imageprocess.filters.ImageFilter;
 import abc2.query.tree.KDTree;
-import abc2.struct.Complex;
 import abc2.struct.DLMap;
 import abc2.struct.Data;
 import abc2.struct.Data_a_b;
@@ -91,11 +88,11 @@ public class PI extends PROGRAM{
 					dy_v_u = ImageFilter.patch_mask(dy_kernel, img, v, u); 
 				}	
 
-				double[][] st = Harris_Stephens.structure_tensor(
+				double[][] st = CornerFilter.decision_matrix(
 						dx_v_u, dy_v_u, v, u, corner_filter_window_function
 						);
 
-				if(Harris_Stephens.R(st, k) != 0){
+				if(CornerFilter.R(st, k) != 0){
 					datum = new Double[]{ u * 1.0 , v * 1.0 };
 					data.add(datum);
 				}
@@ -163,40 +160,40 @@ public class PI extends PROGRAM{
 		//System.out.println("********* STUPID HASH ********");
 		Data_stupidhash hash_data =  bktree_hashmap_folder1.get(f1_img_index);
 		
-		BkTreeSearcher<Data_stupidholder> colsearcher = new BkTreeSearcher<>(bktree_col_folder2);
-		BkTreeSearcher<Data_stupidholder> rowsearcher = new BkTreeSearcher<>(bktree_row_folder2);
+		BkTreeSearchApp<Data_stupidholder> colsearcher = new BkTreeSearchApp<>(bktree_col_folder2);
+		BkTreeSearchApp<Data_stupidholder> rowsearcher = new BkTreeSearchApp<>(bktree_row_folder2);
 
 		//System.out.println("Stupid hashing with image file " + file_map.getKey(f1_img_index));
 		//TODO: verify row and col
 		//System.out.println("Query col with "  + hash_data.col);
 		//System.out.println("Query row with " + hash_data.row);
-		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> colmatches = colsearcher.search(new Data_stupidholder(f1_img_index, hash_data.col), col_l, (int) col_l);
-		Set<BkTreeSearcher.Match<? extends Data_stupidholder>> rowmatches = rowsearcher.search(new Data_stupidholder(f1_img_index, hash_data.row), row_l, (int) row_l);
+		Set<BkTreeSearchApp.Match<? extends Data_stupidholder>> colmatches = colsearcher.search(new Data_stupidholder(f1_img_index, hash_data.col), col_l, (int) col_l);
+		Set<BkTreeSearchApp.Match<? extends Data_stupidholder>> rowmatches = rowsearcher.search(new Data_stupidholder(f1_img_index, hash_data.row), row_l, (int) row_l);
 
 		// image index to the match.
-		Map<Integer, BkTreeSearcher.Match<? extends Data_stupidholder>> collst = new HashMap<>();
-		for (BkTreeSearcher.Match<? extends Data_stupidholder> m : colmatches) {
+		Map<Integer, BkTreeSearchApp.Match<? extends Data_stupidholder>> collst = new HashMap<>();
+		for (BkTreeSearchApp.Match<? extends Data_stupidholder> m : colmatches) {
 			collst.put(m.getMatch().img_index, m);
 		}
 
-		List<BkTreeSearcher.Match<Integer>> intersection = new ArrayList<>(); //= new ArrayList<>(collst); // use the copy constructor
-		for (BkTreeSearcher.Match<? extends Data_stupidholder> row_img : rowmatches) {
+		List<BkTreeSearchApp.Match<Integer>> intersection = new ArrayList<>(); //= new ArrayList<>(collst); // use the copy constructor
+		for (BkTreeSearchApp.Match<? extends Data_stupidholder> row_img : rowmatches) {
 			if (collst.containsKey(row_img.getMatch().img_index)) {
-				intersection.add(new BkTreeSearcher.Match<Integer>(row_img.getMatch().img_index, row_img.getDistance() + collst.get(row_img.getMatch().img_index).getDistance()));
+				intersection.add(new BkTreeSearchApp.Match<Integer>(row_img.getMatch().img_index, row_img.getDistance() + collst.get(row_img.getMatch().img_index).getDistance()));
 			}
 		}
 		// sort the intersection of col row by combined distance.
 		intersection.sort((o1, o2) -> Integer.compare(o1.getDistance(), o2.getDistance()));
 
-		Util.p("\n../queries/" + file_map.back().get(f1_img_index) + " ");
-		int top = 0;
-		for (BkTreeSearcher.Match<Integer> match : intersection){
+//		Util.p("\n../queries/" + file_map.back().get(f1_img_index) + " ");
+//		int top = 0;
+		for (BkTreeSearchApp.Match<Integer> match : intersection){
 			// print the top 10 results in the sorted list.
-			if (top++ < 10) {
-				Util.p(match.getDistance() + " ");
+//			if (top++ < 10) {
+//				Util.p(match.getDistance() + " ");
 
-				Util.p(file_map.back().get(match.getMatch()) + " ");
-			}
+//				Util.p(file_map.back().get(match.getMatch()) + " ");
+//			}
 			RECORD_count_BK(match.getMatch(), match.getDistance());
 		}
 		

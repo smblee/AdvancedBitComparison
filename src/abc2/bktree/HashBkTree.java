@@ -35,13 +35,13 @@ import static java.lang.String.format;
  *
  * @param <E> type of elements in this tree
  */
-public final class MutableBkTree<E> implements BkTree<E> {
+public final class HashBkTree<E> implements BkTree<E> {
 
     private final Metric<? super E> metric;
     MutableNode<E> root;
     public int size;
 
-    public MutableBkTree(Metric<? super E> metric) {
+    public HashBkTree(Metric<? super E> metric) {
         if (metric == null) throw new NullPointerException();
         this.metric = metric;
     }
@@ -119,7 +119,7 @@ public final class MutableBkTree<E> implements BkTree<E> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        MutableBkTree that = (MutableBkTree) o;
+        HashBkTree that = (HashBkTree) o;
 
         if (!metric.equals(that.metric)) return false;
         if (root != null ? !root.equals(that.root) : that.root != null) return false;
@@ -136,7 +136,7 @@ public final class MutableBkTree<E> implements BkTree<E> {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("MutableBkTree{");
+        StringBuilder sb = new StringBuilder("HashBkTree{");
         sb.append("metric=").append(metric);
         sb.append(", root=").append(root);
         sb.append('}');

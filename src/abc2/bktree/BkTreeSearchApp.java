@@ -24,11 +24,11 @@ import static abc2.bktree.BkTree.Node;
 import static java.lang.Math.max;
 import static java.lang.String.format;
 
-public final class BkTreeSearcher<E> {
+public final class BkTreeSearchApp<E> {
 
     private final BkTree<E> tree;
 
-    public BkTreeSearcher(BkTree<E> tree) {
+    public BkTreeSearchApp(BkTree<E> tree) {
         if (tree == null) throw new NullPointerException();
         this.tree = tree;
     }
