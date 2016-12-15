@@ -23,6 +23,9 @@ public class Histogram {
     byte[] rowHash;
     int factor;
     public int threshold;
+    
+    public int[] rows() { return rows; }
+    public int[] cols() { return cols; }
 
     public Histogram(int width, int height) {
         cols = new int[width];

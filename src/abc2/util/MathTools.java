@@ -18,6 +18,38 @@ public class MathTools {
 //		Util.pl(regression(Arrays.asList(d1, d2, d3, d4)));
 //	}
 //	
+	/**
+	 * takes the squares to avoid sqrt operation
+	 * 
+	 * normalized mu and median by dividing n;
+	 * @param rows
+	 * @return
+	 */
+	public static SimpleData mean_var_skewness(int[] rows, int col_l){
+		int row_len = rows.length;
+		double y_sum, mu, median, var, d , skewness_sqr;
+		
+		y_sum = 0.0;
+		for(int i=0; i<row_len; i++){
+			y_sum += rows[i];
+		}
+				
+		mu = (1.0 * y_sum) / row_len;
+		median = rows[row_len / 2];
+		
+		var = 0.0;
+		for(int i=0; i<row_len; i++){
+			d = rows[i] - mu;
+			var += d * d;
+		}
+		
+		var = var / row_len;
+		
+		d = (mu - median);
+		skewness_sqr  = d * d / var;
+		return new SimpleData(mu / col_l, median / col_l, skewness_sqr);
+	}
+	
 	public static SimpleData linear_regression_Var(List<Double[]> data){
 		double a_numerator, a_denominator, a, b, S;
 		double n, x, y, x_sqr_sum, xy_sum, x_sum, y_sum, d;

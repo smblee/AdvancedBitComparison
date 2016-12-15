@@ -13,6 +13,7 @@ import abc2.struct.Complex;
 import abc2.struct.DLMap;
 import abc2.struct.Data;
 import abc2.struct.Data_a_b;
+import abc2.struct.Data_bell_curve;
 import abc2.struct.Data_gof;
 import abc2.struct.Data_stupidhash;
 import abc2.struct.Data_stupidholder;
@@ -101,11 +102,14 @@ public class PI extends PROGRAM{
 				
 			}
 		}
-
+		
+		
 		/* KDTree process data */
 		SimpleData[] d = {
 				MathTools.linear_regression_R2(data),
-				MathTools.inverse_linear_regression_R2(data)
+				MathTools.inverse_linear_regression_R2(data),
+				MathTools.mean_var_skewness(hist.rows(), col_l),
+				MathTools.mean_var_skewness(hist.cols(), row_l)				
 		};
 		
 		/* BKTree save data */
@@ -120,8 +124,7 @@ public class PI extends PROGRAM{
 		DLMap<Integer, SimpleData> curr_data_map;
 		ArrayList<ArrayList<Data>> curr_data_list_list;
 		
-		int d_len = d.length;
-		for(int i=0; i<d.length; i++){
+		for(int i=0; i<2; i++){
 			if(folder2){
 				curr_data_map = listof_data_map_folder2.get(i);
 				curr_data_list_list = listof_data_lists_folder2.get(i);
@@ -137,7 +140,21 @@ public class PI extends PROGRAM{
 			
 			data_a_b_list.add(new Data_a_b(d[i]));
 			data_gof_list.add(new Data_gof(d[i]));
-		}	
+		}
+		for(int i=2; i<4; i++){
+			if(folder2){
+				curr_data_map = listof_data_map_folder2.get(i);
+				curr_data_list_list = listof_data_lists_folder2.get(i);
+			}else{
+				curr_data_map = listof_data_map_folder1.get(i);
+				curr_data_list_list = listof_data_lists_folder1.get(i);
+			}
+			
+			curr_data_map.put(img_index, d[i]); 
+			ArrayList<Data> data_bell_curve_list = curr_data_list_list.get(0);
+			
+			data_bell_curve_list.add(new Data_bell_curve(d[i]));
+		}
 	}//  processImage
 	
 	/* BKTree Query */
@@ -171,14 +188,14 @@ public class PI extends PROGRAM{
 		// sort the intersection of col row by combined distance.
 		intersection.sort((o1, o2) -> Integer.compare(o1.getDistance(), o2.getDistance()));
 
-//		Util.p("\n../queries/" + file_map.back().get(f1_img_index) + " ");
+		Util.p("\n../queries/" + file_map.back().get(f1_img_index) + " ");
 		int top = 0;
 		for (BkTreeSearcher.Match<Integer> match : intersection){
 			// print the top 10 results in the sorted list.
 			if (top++ < 10) {
-//				Util.p(match.getMatch() + " | ");
+				Util.p(match.getDistance() + " ");
 
-//				Util.p(file_map.back().get(match.getMatch()) + " ");
+				Util.p(file_map.back().get(match.getMatch()) + " ");
 			}
 			RECORD_count_BK(match.getMatch(), match.getDistance());
 		}
@@ -199,7 +216,10 @@ public class PI extends PROGRAM{
 				
 				switch(j){
 					case 0:
-						query_data = new Data_a_b(folder1_data_map.getValue(f1_img_index));
+						if(i == 0 || i == 1)
+							query_data = new Data_a_b(folder1_data_map.getValue(f1_img_index));
+						else
+							query_data = new Data_bell_curve(folder1_data_map.getValue(f1_img_index));
 						break;
 					case 1:
 						query_data = new Data_gof(folder1_data_map.getValue(f1_img_index));
@@ -216,8 +236,10 @@ public class PI extends PROGRAM{
 					SimpleData sd;
 					if(datum instanceof Data_a_b)
 						sd = ((Data_a_b) datum).sd;
-					else
+					else if(datum instanceof Data_gof)
 						sd = ((Data_gof) datum).sd;
+					else
+						sd = ((Data_bell_curve) datum).sd;
 
 					DLMap<Integer, SimpleData> tool_i_data_map_folder2 = listof_data_map_folder2.get(i);
 					int index = tool_i_data_map_folder2.getKey(sd);

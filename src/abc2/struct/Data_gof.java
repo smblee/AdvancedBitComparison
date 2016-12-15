@@ -8,7 +8,7 @@ public class Data_gof implements Data {
 	
 	public Data_gof(SimpleData _sd){
 		sd = _sd;
-		comparables = new Double[]{sd.gof};
+		comparables = new Double[]{sd.c};
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class Data_gof implements Data {
 
 	@Override
 	public double distance(Data other) {
-		double dist = ((Data_gof) other).sd.gof - this.sd.gof;
+		double dist = ((Data_gof) other).sd.c - this.sd.c;
 		return dist * dist;
 	}
 

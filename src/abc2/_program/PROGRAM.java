@@ -27,7 +27,7 @@ import abc2.util.fn;
 //import static abc2.test.BKTreeTest.asSortedList;
 
 public class PROGRAM {
-	private static boolean SHOW_RUNTIMES = false;
+	private static boolean SHOW_RUNTIMES = true;
 	
 	private static FileReader fr; 
 	private static BufferedReader br;
@@ -49,7 +49,7 @@ public class PROGRAM {
 	protected static Map<Integer, Data_stupidhash> bktree_hashmap_folder1;
 	
 	/* KDTree vars */
-		protected static int tools_count = 2;
+		protected static int tools_count = 4;
 		//list of
 		// map
 		protected static ArrayList<DLMap<Integer, SimpleData>> listof_data_map_folder1;
@@ -68,22 +68,23 @@ public class PROGRAM {
 
 	/* OVERALL COUNTS */
 	private static HashMap<Integer, Double> RESULT_COUNT_TABLE= new HashMap<Integer, Double>();
+	
+	private static double weight_KD = 0.5;
+	private static double weight_BK = 1;
 	protected static void RECORD_count_KD(Integer index){
         if(RESULT_COUNT_TABLE.containsKey(index)){
-            RESULT_COUNT_TABLE.put(index, RESULT_COUNT_TABLE.get(index) + row_l+col_l);
+            RESULT_COUNT_TABLE.put(index, RESULT_COUNT_TABLE.get(index) + 1 * weight_KD);
         }else{
-            RESULT_COUNT_TABLE.put(index, (double) row_l+col_l);
+            RESULT_COUNT_TABLE.put(index, (double) weight_KD);
         }
-//		Util.pl(index + " count: " + RESULT_COUNT_TABLE.get(index));
     }
 
-    protected static void RECORD_count_BK(Integer index, double weight){
+    protected static void RECORD_count_BK(Integer index, double hammingdistance){
         if(RESULT_COUNT_TABLE.containsKey(index)){
-            RESULT_COUNT_TABLE.put(index, RESULT_COUNT_TABLE.get(index) + weight);
+            RESULT_COUNT_TABLE.put(index, RESULT_COUNT_TABLE.get(index) + (row_l + col_l - hammingdistance) * weight_BK);
         }else{
-            RESULT_COUNT_TABLE.put(index, weight);
+            RESULT_COUNT_TABLE.put(index, (row_l + col_l - hammingdistance) * weight_BK);
         }
-//		Util.pl(index + " count: " + RESULT_COUNT_TABLE.get(index));
     }
 	
 	/* Main PROGRAM */
@@ -151,7 +152,7 @@ public class PROGRAM {
 			RESULT_COUNT_TABLE.clear();
 			// index to count
 			long ss1 = System.nanoTime();
-//			PI.query_KDTree(f1_img_index);
+			PI.query_KDTree(f1_img_index);
 			long ss2 = System.nanoTime();
 			PI.query_BKTree(f1_img_index);
 			long ss3 = System.nanoTime();
@@ -162,7 +163,7 @@ public class PROGRAM {
 			ArrayList<Map.Entry<Integer, Double>> list =
 					new ArrayList<Map.Entry<Integer, Double>>(RESULT_COUNT_TABLE.entrySet());
 			
-			list.sort((e1, e2) -> Double.compare(e1.getValue(), e2.getValue()));
+			list.sort((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()));
 
 //            System.out.println();
 //
@@ -273,20 +274,21 @@ public class PROGRAM {
 
 			ArrayList<ArrayList<Data>> data_list_list1 = new ArrayList<ArrayList<Data>>();
 			//for data_a_b;
-			 data_list_list1.add(new ArrayList<Data>());
-			//for data_gof;
-			 data_list_list1.add(new ArrayList<Data>());
+			data_list_list1.add(new ArrayList<Data>());
+			if(i==0 || i==1) //for data_gof;
+				data_list_list1.add(new ArrayList<Data>());
 			ArrayList<ArrayList<Data>> data_list_list2 = new ArrayList<ArrayList<Data>>();
 			//for data_a_b;
-			 data_list_list2.add(new ArrayList<Data>());
-			//for data_gof;
-			 data_list_list2.add(new ArrayList<Data>());
+			data_list_list2.add(new ArrayList<Data>());
+			if(i==0 || i==1) //for data_gof;
+				data_list_list2.add(new ArrayList<Data>());
 						
 			listof_data_lists_folder1.add(data_list_list1);
 			listof_data_lists_folder2.add(data_list_list2);
 			
 			Forest.add(new ArrayList<KDTree>());
 		}
+		
 	}
 	
 //	

@@ -8,7 +8,7 @@ public class Data_gof_a_b implements Data {
 
 	public Data_gof_a_b(SimpleData _sd){
 		sd = _sd;
-		comparables = new Double[]{sd.gof, sd.a, sd.b};
+		comparables = new Double[]{sd.c, sd.a, sd.b};
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class Data_gof_a_b implements Data {
 	}
 	
 	private double d_gof(Object other){
-		double ret = ((Data_gof_a_b) other).sd.gof - this.sd.gof;
+		double ret = ((Data_gof_a_b) other).sd.c - this.sd.c;
 		return ret * ret;
 	}
 	private double d_a(Object other){
