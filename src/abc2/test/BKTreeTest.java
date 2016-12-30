@@ -1,8 +1,8 @@
 package abc2.test;
 
-import abc2.bktree.BkTreeSearchApp;
+import abc2.bktree.BKTreeSearch;
 import abc2.bktree.HammingDistanceMetric;
-import abc2.bktree.HashBkTree;
+import abc2.bktree.BKTree;
 import abc2.bktree.Metric;
 
 import java.util.*;
@@ -27,19 +27,19 @@ public class BKTreeTest {
             return distance;
         };
 
-        HashBkTree<String> bkTree = new HashBkTree<>(new HammingDistanceMetric());
+        BKTree<String> bkTree = new BKTree<>(new HammingDistanceMetric());
 
         bkTree.addAll("11119", "11100", "10000", "10010", "00000", "01110", "01100", "00001", "00010", "10111");
 //        bkTree.addAll("berets", "carrot", "egrets", "marmot", "packet", "pilots", "purist");
 
-        BkTreeSearchApp<String> searcher = new BkTreeSearchApp<>(bkTree);
+        BKTreeSearch<String> searcher = new BKTreeSearch<>(bkTree);
 
-        Set<BkTreeSearchApp.Match<? extends String>> matches = searcher.search("01110", 2, 6);
+        Set<BKTreeSearch.Match<? extends String>> matches = searcher.search("01110", 2, 6);
 
-//        List<BkTreeSearchApp.Match<? extends String>> lst = asSortedList(matches);
+//        List<BKTreeSearch.Match<? extends String>> lst = asSortedList(matches);
 //
 //
-//        for (BkTreeSearchApp.Match<? extends String> match : lst)
+//        for (BKTreeSearch.Match<? extends String> match : lst)
 //            System.out.println(String.format(
 //                    "%s (distance %d)",
 //                    match.getMatch(),

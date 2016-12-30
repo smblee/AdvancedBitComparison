@@ -6,11 +6,7 @@ import java.text.*;
 import java.math.*;
 import java.util.regex.*;
 
-/**
- * Created by brylee on 12/13/16.
- */
 public class HammingDistanceMetric implements Metric {
-    @Override
     public int distance(Object a, Object b) {
         String x = (String) a;
         String y = (String) b;

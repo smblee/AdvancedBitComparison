@@ -3,7 +3,7 @@ package abc2._program;
 import java.util.*;
 import java.util.function.BiFunction;
 
-import abc2.bktree.BkTreeSearchApp;
+import abc2.bktree.BKTreeSearch;
 import abc2.imageprocess.corner.filter.CornerFilter;
 import abc2.imageprocess.filters.ImageFilter;
 import abc2.query.tree.KDTree;
@@ -22,7 +22,7 @@ import abc2.util.fn;
 
 public class PI extends PROGRAM{
 	
-	public static void processImage(String path, int img_index, boolean folder2){
+	public static void processImage(String path, int img_index, boolean dbfolder){
 		/*	Read	*/
 		int[][] image;
 		image = Util.read(path, row_l, col_l);
@@ -30,7 +30,7 @@ public class PI extends PROGRAM{
 		processImage(
 				image, 
 				img_index, 
-				folder2,
+				dbfolder,
 				CORNER_FILTER.x_kernel(),
 				CORNER_FILTER.y_kernel(),
 				CORNER_FILTER_K
@@ -160,34 +160,42 @@ public class PI extends PROGRAM{
 		//System.out.println("********* STUPID HASH ********");
 		Data_stupidhash hash_data =  bktree_hashmap_folder1.get(f1_img_index);
 		
-		BkTreeSearchApp<Data_stupidholder> colsearcher = new BkTreeSearchApp<>(bktree_col_folder2);
-		BkTreeSearchApp<Data_stupidholder> rowsearcher = new BkTreeSearchApp<>(bktree_row_folder2);
+		BKTreeSearch<Data_stupidholder> colsearcher = new BKTreeSearch<>(bktree_col_folder2);
+		BKTreeSearch<Data_stupidholder> rowsearcher = new BKTreeSearch<>(bktree_row_folder2);
 
 		//System.out.println("Stupid hashing with image file " + file_map.getKey(f1_img_index));
 		//TODO: verify row and col
 		//System.out.println("Query col with "  + hash_data.col);
 		//System.out.println("Query row with " + hash_data.row);
-		Set<BkTreeSearchApp.Match<? extends Data_stupidholder>> colmatches = colsearcher.search(new Data_stupidholder(f1_img_index, hash_data.col), col_l, (int) col_l);
-		Set<BkTreeSearchApp.Match<? extends Data_stupidholder>> rowmatches = rowsearcher.search(new Data_stupidholder(f1_img_index, hash_data.row), row_l, (int) row_l);
+		Set<BKTreeSearch.Match<Integer>> intersectionSet = new HashSet<>(); //= new ArrayList<>(collst); // use the copy constructor
+		int currCol = 0;
+		int currRow = 0;
+		while (intersectionSet.size() < query_size && currCol < col_l && currRow < row_l) {
+			Set<BKTreeSearch.Match<? extends Data_stupidholder>> colmatches = colsearcher.search(new Data_stupidholder(f1_img_index, hash_data.col), currCol, (int) query_size);
+			Set<BKTreeSearch.Match<? extends Data_stupidholder>> rowmatches = rowsearcher.search(new Data_stupidholder(f1_img_index, hash_data.row), currRow, (int) query_size);
 
-		// image index to the match.
-		Map<Integer, BkTreeSearchApp.Match<? extends Data_stupidholder>> collst = new HashMap<>();
-		for (BkTreeSearchApp.Match<? extends Data_stupidholder> m : colmatches) {
-			collst.put(m.getMatch().img_index, m);
-		}
-
-		List<BkTreeSearchApp.Match<Integer>> intersection = new ArrayList<>(); //= new ArrayList<>(collst); // use the copy constructor
-		for (BkTreeSearchApp.Match<? extends Data_stupidholder> row_img : rowmatches) {
-			if (collst.containsKey(row_img.getMatch().img_index)) {
-				intersection.add(new BkTreeSearchApp.Match<Integer>(row_img.getMatch().img_index, row_img.getDistance() + collst.get(row_img.getMatch().img_index).getDistance()));
+			// image index to the match.
+			Map<Integer, BKTreeSearch.Match<? extends Data_stupidholder>> collst = new HashMap<>();
+			for (BKTreeSearch.Match<? extends Data_stupidholder> m : colmatches) {
+				collst.put(m.getMatch().img_index, m);
 			}
+
+			for (BKTreeSearch.Match<? extends Data_stupidholder> row_img : rowmatches) {
+				if (collst.containsKey(row_img.getMatch().img_index)) {
+					intersectionSet.add(new BKTreeSearch.Match<Integer>(row_img.getMatch().img_index, row_img.getDistance() + collst.get(row_img.getMatch().img_index).getDistance()));
+				}
+			}
+			currCol++;
+			currRow++;
 		}
+		List<BKTreeSearch.Match<Integer>> intersection = new ArrayList<>(intersectionSet); //= new ArrayList<>(collst); // use the copy constructor
+
 		// sort the intersection of col row by combined distance.
-		intersection.sort((o1, o2) -> Integer.compare(o1.getDistance(), o2.getDistance()));
+				intersection.sort((o1, o2) -> Integer.compare(o1.getDistance(), o2.getDistance()));
 
 //		Util.p("\n../queries/" + file_map.back().get(f1_img_index) + " ");
 //		int top = 0;
-		for (BkTreeSearchApp.Match<Integer> match : intersection){
+		for (BKTreeSearch.Match<Integer> match : intersection){
 			// print the top 10 results in the sorted list.
 //			if (top++ < 10) {
 //				Util.p(match.getDistance() + " ");

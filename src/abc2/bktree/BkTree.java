@@ -1,29 +1,118 @@
-/*
- * Copyright 2013 Georgia Tech Applied Research Corporation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package abc2.bktree;
 
-public interface BkTree<E> {
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-    Metric<? super E> getMetric();
+public final class BKTree<E> {
 
-    Node<E> getRoot();
+    private final Metric<? super E> metric;
+    BKNode<E> root;
+    public int size;
 
-    interface Node<E> {
-        E getElement();
-        Node<E> getChildNode(int distance);
+    public BKTree(Metric metric) {
+        if (metric == null) throw new NullPointerException();
+        this.metric = metric;
+    }
+    public void add(E element) {
+        if (element == null) throw new NullPointerException();
+
+        if (root == null) {
+            root = new BKNode<>(element);
+        } else {
+            BKNode<E> node = root;
+            while (!node.getElement().equals(element)) {
+                int distance = distance(node.getElement(), element);
+
+                BKNode<E> parent = node;
+                node = parent.childrenByDistance.get(distance);
+                if (node == null) {
+                    node = new BKNode<>(element);
+                    parent.childrenByDistance.put(distance, node);
+                    break;
+                }
+            }
+        }
+        size++;
+    }
+
+    private int distance(E x, E y) {
+        int distance = metric.distance(x, y);
+        if (distance < 0) {
+            throw new IllegalArgumentException();
+        }
+        return distance;
+    }
+
+    public void addAll(Iterable<? extends E> elements) {
+        if (elements == null) throw new NullPointerException();
+        for (E element : elements) {
+            add(element);
+        }
+    }
+
+
+    public final void addAll(E... elements) {
+        if (elements == null) throw new NullPointerException();
+        addAll(Arrays.asList(elements));
+    }
+
+    public Metric<? super E> getMetric() {
+        return metric;
+    }
+
+    public BKNode<E> getRoot() {
+        return root;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BKTree that = (BKTree) o;
+
+        if (!metric.equals(that.metric)) return false;
+        if (root != null ? !root.equals(that.root) : that.root != null) return false;
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result = metric.hashCode();
+        result = 31 * result + (root != null ? root.hashCode() : 0);
+        return result;
+    }
+
+    static final class BKNode<E> {
+        final E element;
+        final Map<Integer, BKNode<E>> childrenByDistance = new HashMap<>();
+
+        BKNode(E element) {
+            if (element == null) throw new NullPointerException();
+            this.element = element;
+        }
+
+        public E getElement() {
+            return element;
+        }
+
+        public BKNode<E> getChildNode(int distance) {
+            return childrenByDistance.get(distance);
+        }
+
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            BKNode that = (BKNode) o;
+            if (!element.equals(that.element)) return false;
+
+            return true;
+        }
+
+        public int hashCode() {
+            int result = element.hashCode();
+            return result;
+        }
     }
 }

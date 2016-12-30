@@ -34,8 +34,8 @@ public class PROGRAM {
 	protected static DLMap<String, Integer> file_map;
 	
 	/* BKTree vars */
-	protected static HashBkTree bktree_col_folder2;
-	protected static HashBkTree bktree_row_folder2;
+	protected static BKTree bktree_col_folder2;
+	protected static BKTree bktree_row_folder2;
 	protected static Map<Integer, Data_stupidhash> bktree_hashmap_folder1;
 	
 	/* KDTree vars */
@@ -94,7 +94,11 @@ public class PROGRAM {
 		initStructures();
 		
 		indexImages();
-		
+
+		if (query_size > f2_list.length - 1) {
+			System.out.println("Query size is too big. It should be less than database size. (" + f2_list.length + ")");
+			System.exit(1);
+		}
 		/* process the images and create tables */
 
 		long s2 = System.currentTimeMillis();													//
@@ -138,15 +142,15 @@ public class PROGRAM {
 		//TreeMap from overlap counts to img_index
 		for(String f1_imgname: f1_list){
 			int f1_img_index = file_map.getValue(f1_imgname);
-			
 			RESULT_COUNT_TABLE.clear();
 			// index to count
-//			long ss1 = System.nanoTime();
+			long ss1 = System.nanoTime();
 			PI.query_KDTree(f1_img_index);
-//			long ss2 = System.nanoTime();
+			long ss2 = System.nanoTime();
 			PI.query_BKTree(f1_img_index);
-//			long ss3 = System.nanoTime();
-			
+
+			long ss3 = System.nanoTime();
+
 //			if(SHOW_RUNTIMES)	Util.pl("KDTree : " + (ss2 - ss1) + " ns");
 //			if(SHOW_RUNTIMES)	Util.pl("BKTree : " + (ss3 - ss2) + " ns");
 
@@ -248,8 +252,8 @@ public class PROGRAM {
 //            }
 			return distance;
 		};
-		bktree_col_folder2 = new HashBkTree<>(hammingDistance);
-		bktree_row_folder2 = new HashBkTree<>(hammingDistance);
+		bktree_col_folder2 = new BKTree<>(hammingDistance);
+		bktree_row_folder2 = new BKTree<>(hammingDistance);
 		bktree_hashmap_folder1 = new HashMap<>();
 		
 		// KDTree init
